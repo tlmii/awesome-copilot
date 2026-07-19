@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-19
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -541,7 +541,7 @@ The `/cd` command changes the working directory for the current session. Since v
 
 This is useful when you have multiple backgrounded sessions each focused on a different project directory.
 
-The `/worktree` command (v1.0.61+, also aliased `/move`) creates a new git worktree and switches into it, moving any uncommitted changes along. This lets you start working on a parallel branch without leaving your current terminal session:
+The `/worktree` command (v1.0.61+) creates a new git worktree and switches into it, **leaving any uncommitted changes behind** in the original worktree. This is useful when you want to start fresh parallel work while keeping your current changes in place:
 
 ```
 /worktree my-feature-branch
@@ -555,7 +555,15 @@ In v1.0.66+, you can pass a task description to `/worktree` to name the branch f
 
 This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
 
-After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
+The `/move` command *(v1.0.71+)* is a companion to `/worktree` that **carries your uncommitted changes** into the new worktree. Use it when you started work in the wrong place and want to continue in a new branch without losing your local edits:
+
+```
+/move my-feature-branch
+```
+
+**Summary**: Use `/worktree` to start fresh parallel work; use `/move` to relocate uncommitted work-in-progress to a new branch.
+
+After either command runs, the session is inside the new worktree. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
 
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
 
@@ -741,6 +749,8 @@ copilot --mode agent    # start in agent mode (autonomous tool use)
 copilot --autopilot     # alias for --mode autopilot (allow-all)
 copilot --plan          # start in plan mode (propose without executing)
 ```
+
+> **Plan mode safety guarantee** *(v1.0.71+)*: Plan mode hard-blocks all built-in tool calls that would modify the workspace — the agent cannot edit files or run mutating shell commands while planning. Built-in mutating operations (such as opening a pull request) are blocked. MCP and external tools remain available. This ensures plan mode is always a safe, read-only preview of proposed work.
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
 

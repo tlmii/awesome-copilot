@@ -383,6 +383,16 @@ copilot skill remove my-skill           # remove an installed skill by name
 
 You can also run `/skill` (or the existing `/skills`) inside an interactive session to see what's loaded. The `copilot skill` subcommand is the recommended way to install skills that aren't packaged inside a plugin.
 
+*(v1.0.72+)* You can also install skills through the plugin system using `copilot plugins install --skill`:
+
+```bash
+copilot plugins install --skill ./my-skill/           # install from a local directory
+copilot plugins install --skill https://example.com/skill.zip  # install from a URL
+copilot plugins install --skill ./my-skill/ --scope project    # install into the repository
+```
+
+The `--scope project` flag installs the skill into the current repository (`.github/skills/`) rather than globally, making it available to all team members in that repo automatically.
+
 **Q: How are skills different from prompts?**
 
 A: Skills replace the older prompt file (`*.prompt.md`) format. Skills offer agent discovery (prompts were manual-only), bundled assets (prompts were single files), and cross-platform portability via the Agent Skills specification. If you have existing prompts, consider migrating them to skills.

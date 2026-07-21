@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-21
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -182,6 +182,31 @@ Pinning to a SHA guarantees that everyone on the team installs plugins from exac
 - **Change control** — review and approve plugin updates before rolling them out team-wide
 - **Stability** — prevent breaking changes in upstream marketplaces from impacting your team without notice
 
+## Installing Skills Directly
+
+You can install standalone skills (not packaged inside a plugin) directly from the CLI with `copilot plugins install --skill` *(v1.0.72+)*:
+
+```bash
+# Install a skill from a local directory
+copilot plugins install --skill ./my-skill/
+
+# Install a skill from a URL
+copilot plugins install --skill https://example.com/my-skill.zip
+
+# Install into the repository (project scope) instead of globally
+copilot plugins install --skill ./my-skill/ --scope project
+```
+
+You can also manage skills from within an interactive session:
+
+```
+/plugins install --skill ./my-skill/
+/plugins list --skill
+/plugins remove --skill my-skill
+```
+
+> **Tip**: The `copilot skill` subcommand (v1.0.65+) provides an alternative way to manage skills: `copilot skill list`, `copilot skill add`, and `copilot skill remove`.
+
 ## Installing Plugins
 
 ### From Copilot CLI
@@ -220,6 +245,23 @@ copilot plugin marketplace update
 
 # Remove a plugin
 copilot plugin uninstall my-plugin
+```
+
+You can also manage plugins from within an interactive Copilot session using `/plugins` *(v1.0.72+)*, which mirrors the `copilot plugin` subcommand but works in-session:
+
+```
+/plugins list                                  # list installed plugins
+/plugins install my-plugin@awesome-copilot     # install a plugin
+/plugins update my-plugin                      # update a plugin
+/plugins uninstall my-plugin                   # uninstall a plugin
+/plugins marketplace browse awesome-copilot   # browse available plugins
+```
+
+The `enable`/`disable`/`remove` verbs also accept `--plugin`, `--mcp`, and `--skill` flags to target a specific component type, letting you manage individual plugin components without affecting others:
+
+```
+/plugins disable --skill my-skill
+/plugins enable --mcp my-mcp-server
 ```
 
 ### Loading Plugins from a Local Directory

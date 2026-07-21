@@ -3,7 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-21
 estimatedReadingTime: '8 minutes'
 tags:
   - hooks
@@ -368,6 +368,26 @@ Run ESLint after the agent finishes responding and block if there are errors:
 ```
 
 If the lint command exits with a non-zero status, the action is blocked.
+
+> **`stop_hook_active` flag (v1.0.72+)**: An `agentStop` hook that always blocks (always returns non-zero) can cause the CLI to loop indefinitely. To prevent this, the CLI now terminates the turn after **8 consecutive blocks** from `agentStop` hooks. To let your hook detect this situation and self-limit, it receives a `stop_hook_active` field in its JSON input when it is being invoked during a forced continuation. Check for this flag to suppress unnecessary errors or logging when a block was already enforced:
+>
+> ```bash
+> #!/usr/bin/env bash
+> INPUT=$(cat)
+> STOP_HOOK_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active // false')
+>
+> if [ "$STOP_HOOK_ACTIVE" = "true" ]; then
+>   # The CLI is forcing continuation — avoid re-blocking
+>   exit 0
+> fi
+>
+> # Normal lint check
+> npx eslint . --max-warnings 0
+> ```
+
+### Hooks Follow /cd Session Directory (v1.0.72+)
+
+When you change directories during a session with `/cd`, **lifecycle and subagent hook commands now run in the updated session directory** rather than the directory where the session started. This means that hooks like `agentStop` or `subagentStart` automatically operate on the correct working directory after a `/cd` change — no manual path management required.
 
 ### Security Gating with preToolUse
 

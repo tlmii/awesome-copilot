@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-22
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -468,6 +468,15 @@ The settings dialog supports search — type to filter settings by name. Changes
 /model --local      # view/edit your personal model preference
 ```
 
+*(v1.0.72+)* The `/model --session` flag (shorthand `-s`) changes the model, reasoning effort, or context window **for just the current session**, leaving your global and repository settings unchanged:
+
+```
+/model --session                      # open model picker for session-only change
+/model --session claude-sonnet-4.6    # switch model for this session only
+```
+
+This is useful when you want to temporarily try a different model on a complex problem without affecting your default configuration.
+
 These flags mirror the **Repo** and **Repo (local)** scope tabs available in the `/settings` dashboard (v1.0.71+), making it easier to manage per-repository vs. user-global configuration without ambiguity. In v1.0.71+, the `/settings` dashboard also shows **Repo** and **Repo (local)** tabs alongside the existing user-level view, giving you a unified place to see which settings are applied at each layer.
 
 GitHub Copilot CLI has two commands for managing session state, with distinct behaviours:
@@ -541,10 +550,14 @@ The `/cd` command changes the working directory for the current session. Since v
 
 This is useful when you have multiple backgrounded sessions each focused on a different project directory.
 
-The `/worktree` command (v1.0.61+, also aliased `/move`) creates a new git worktree and switches into it, moving any uncommitted changes along. This lets you start working on a parallel branch without leaving your current terminal session:
+The `/worktree` command (v1.0.61+) creates a new git worktree and switches into it. In v1.0.71+, `/worktree` and `/move` were split into distinct commands with different behaviors:
+
+- **`/worktree`** — creates a new worktree and **leaves your uncommitted changes behind** in the current worktree. Use this when you want to start fresh work on a new branch without carrying over in-progress changes.
+- **`/move`** — creates a new worktree and **carries your uncommitted changes with it**. Use this when you want to continue your current work on a new branch.
 
 ```
-/worktree my-feature-branch
+/worktree my-feature-branch   # new worktree, current changes stay behind
+/move my-feature-branch       # new worktree, current changes move with you
 ```
 
 In v1.0.66+, you can pass a task description to `/worktree` to name the branch from the task and immediately run the task as the first prompt in the new worktree — all in one step:

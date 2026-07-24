@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-24
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -222,6 +222,26 @@ copilot plugin marketplace update
 copilot plugin uninstall my-plugin
 ```
 
+You can also enable or disable individual components within a plugin without uninstalling it, using the `--plugin`, `--mcp`, or `--skill` flags with `/plugins` (v1.0.72+):
+
+```
+/plugins enable --skill my-skill          # enable a specific skill
+/plugins disable --mcp my-server          # disable an MCP server from a plugin
+/plugins remove --plugin old-plugin       # remove an entire plugin
+```
+
+### Installing Skills Directly
+
+*(v1.0.72+)* You can install individual skills without packaging them in a full plugin using `copilot plugins install --skill`:
+
+```bash
+copilot plugins install --skill ./my-skill/         # install from a local directory
+copilot plugins install --skill https://example.com/skill.zip  # install from a URL
+copilot plugins install --skill ./my-skill/ --scope project    # install into the current repo
+```
+
+This is the recommended way to share skills that aren't part of a larger plugin bundle.
+
 ### Loading Plugins from a Local Directory
 
 You can load plugins directly from a local directory without installing them from a marketplace, using the `--plugin-dir` flag when starting Copilot:
@@ -231,6 +251,10 @@ copilot --plugin-dir /path/to/my-plugin
 ```
 
 Plugins loaded this way appear in `/plugin list` under a separate **External Plugins** section, clearly distinguished from marketplace-installed plugins. This is useful for testing local plugins in development or loading private plugins that aren't published to any marketplace.
+
+### Open Plugin Spec v1 Support
+
+*(v1.0.74+)* Copilot CLI now supports **Open Plugin Spec v1** plugin manifests as well as `mcp.json` configuration files. This means plugins authored to the Open Plugin Spec are compatible with Copilot CLI, increasing the range of community plugins you can install directly without any conversion.
 
 ### Where Plugins Are Stored
 

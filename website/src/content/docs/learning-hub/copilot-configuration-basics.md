@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-24
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -541,21 +541,26 @@ The `/cd` command changes the working directory for the current session. Since v
 
 This is useful when you have multiple backgrounded sessions each focused on a different project directory.
 
-The `/worktree` command (v1.0.61+, also aliased `/move`) creates a new git worktree and switches into it, moving any uncommitted changes along. This lets you start working on a parallel branch without leaving your current terminal session:
+As of v1.0.71, `/worktree` and `/move` are two distinct commands with different behaviors for handling uncommitted changes:
+
+- **`/worktree <branch-or-task>`** — Creates a new git worktree and switches into it, **leaving your uncommitted changes behind** in the current worktree. Use this when you want to start a completely fresh parallel track while preserving the work in progress.
+- **`/move <branch-or-task>`** — Creates a new git worktree and **carries your uncommitted changes into it**. Use this when you want to continue your current changes on a new branch.
 
 ```
-/worktree my-feature-branch
+/worktree my-feature-branch        # new worktree, leave changes behind
+/move my-feature-branch            # new worktree, carry changes with you
 ```
 
-In v1.0.66+, you can pass a task description to `/worktree` to name the branch from the task and immediately run the task as the first prompt in the new worktree — all in one step:
+In v1.0.66+, you can pass a task description to either command to name the branch from the task and immediately run the task as the first prompt in the new worktree — all in one step:
 
 ```
-/worktree fix the login redirect
+/worktree fix the login redirect    # branch named from task, no uncommitted changes
+/move fix the login redirect        # branch named from task, uncommitted changes come along
 ```
 
-This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
+This makes it easy to spin up parallel work without stopping to think of a branch name. After the command runs, the session is inside the new worktree. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
 
-After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
+> **Upgrade note**: Before v1.0.71, `/move` was an alias for `/worktree` and both commands carried uncommitted changes. Update any scripts or workflows that relied on the old alias behavior.
 
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
 
@@ -744,6 +749,18 @@ copilot --plan          # start in plan mode (propose without executing)
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
 
+**Plan mode** (v1.0.71+) now **hard-blocks** built-in tool calls that would modify the workspace — the agent cannot edit files, run mutating shell commands, or make other workspace changes while planning. Writing planning artifacts to your session folder (e.g., a `plan.md` in `~/.copilot/session-state/`) is still allowed so the agent can document its plan without touching your project files.
+
+To use a specific model only while in plan mode, use `/model plan` (or `/model --plan`) inside an interactive session:
+
+```
+/model plan                   # open the model picker scoped to plan mode
+/model plan claude-opus-5     # set plan-mode model directly
+/model plan off               # clear the plan-mode model (reverts to session model)
+```
+
+The plan-mode model reverts to your session model as soon as you leave plan mode, so switching to a thinking model for planning doesn't permanently change your working model.
+
 The `--max-autopilot-continues` flag controls how many times Copilot can automatically continue in autopilot mode before pausing for confirmation. The default is 5:
 
 ```bash
@@ -751,6 +768,16 @@ copilot --autopilot --max-autopilot-continues 10 "Refactor the authentication mo
 ```
 
 Set it higher for long-running tasks, or lower for tasks where you want more frequent checkpoints. Setting it to `0` disables automatic continuation entirely.
+
+The `/model --session` flag *(v1.0.72+)* lets you change the model, reasoning effort, or context window for **just the current session** without affecting your global settings. This is useful when one particular task calls for a more powerful (or more economical) model than your default:
+
+```
+/model --session                  # open the model picker scoped to this session only
+/model -s claude-opus-5           # switch to Claude Opus 5 for this session
+/model -s gpt-5.6                 # switch to GPT-5.6 for this session
+```
+
+Session-level model overrides are discarded when the session ends — your global model setting is unchanged.
 
 The `--sandbox` and `--no-sandbox` flags *(v1.0.70+)* turn the OS-level shell sandbox on or off for the current session only, without permanently changing your saved sandbox setting. This is useful with `-p` (prompt mode) when you need to temporarily adjust sandbox behavior for a specific automated task:
 

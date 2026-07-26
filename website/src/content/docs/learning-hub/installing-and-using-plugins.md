@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-26
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -36,6 +36,8 @@ A plugin bundles one or more of the following components:
 | **Extensions** | IDE extensions installable via the plugin marketplace (v1.0.62+) | `extensions/` |
 
 A plugin might include all of these or just one — for example, a plugin could provide a single specialized agent, or an entire development toolkit with multiple agents, skills, hooks, and MCP server configurations working together.
+
+> **Open Plugin Spec v1 (v1.0.74+)**: Copilot CLI now supports **Open Plugin Spec v1** plugin manifests and `mcp.json` configuration files. This means plugins authored to the open standard are recognized natively, and any repository with a `mcp.json` (or `.github/mcp.json`) file is automatically treated as a valid MCP server source, improving compatibility with third-party tooling and community plugins.
 
 ### Example: What a Plugin Looks Like
 
@@ -199,6 +201,23 @@ Or from an interactive session:
 ```
 
 > **Deprecation notice**: Installing plugins directly from a GitHub repository URL, raw URL, or local file path (e.g., `copilot plugin install github/awesome-copilot`) is deprecated and will be removed in a future release. Use marketplace-based installation instead.
+
+### Installing Skills Directly
+
+*(v1.0.72+)* You can install individual skills without a full plugin using `copilot plugins install --skill`:
+
+```bash
+# Install a skill from a local directory
+copilot plugins install --skill ./skills/my-skill/
+
+# Install a skill from a URL
+copilot plugins install --skill https://example.com/skills/my-skill.zip
+
+# Install into the current repository (project scope)
+copilot plugins install --skill ./skills/my-skill/ --scope project
+```
+
+Skills installed this way work just like skills bundled inside plugins — they're discoverable by agents and invocable via slash commands.
 
 ### From VS Code
 

@@ -3,7 +3,7 @@ title: 'Building Custom Agents'
 description: 'Learn how to create specialized GitHub Copilot agents with custom personas, tool integrations, and domain expertise.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-09
+lastUpdated: 2026-07-26
 estimatedReadingTime: '10 minutes'
 tags:
   - agents
@@ -254,11 +254,13 @@ The agent can then query your database, analyze query plans, and suggest optimiz
 
 | Scenario | Recommended Model |
 |----------|-------------------|
+| Highest-quality reasoning, complex research | Claude Opus 5 *(v1.0.75+)* |
 | Most demanding reasoning, security review | Claude Sonnet 5 *(v1.0.67+)* |
 | Complex reasoning, analysis | Claude Sonnet 4 |
 | Code generation, tool-driven agentic work | GPT-5.6 *(v1.0.70+)* |
 | Code generation, refactoring | GPT-4.1 |
 | Code-specialized tasks, large context | kimi-k2.7-code *(v1.0.68+)* |
+| Fast, cost-efficient agentic tasks | gemini-3.6-flash *(v1.0.74+)* |
 | Quick analysis, simple tasks | Claude Haiku or GPT-4.1-mini |
 | Large codebase understanding | Models with larger context windows |
 
@@ -274,6 +276,20 @@ The agent can then query your database, analyze query plans, and suggest optimiz
 ```
 
 Keep agents focused—one persona per file. If you find an agent trying to do too many things, split it into multiple agents or extract common tasks into skills that agents can invoke.
+
+### Relative Links in Agent Instructions
+
+*(v1.0.73+)* When your agent instructions include relative file links (e.g., `[style guide](./docs/style-guide.md)`), those links are now resolved from the location of the agent file itself. This means you can safely reference companion docs or templates in the same directory without worrying about the user's current working directory.
+
+### Per-Session Model Override
+
+*(v1.0.72+)* Use `/model --session` (or `/model -s`) to change the model, reasoning effort, or context window for just the current session without affecting your global settings:
+
+```
+/model --session claude-sonnet-4
+```
+
+This is useful when you're working on a task that needs a more capable (or faster/cheaper) model than your default, but you don't want to change your settings permanently.
 
 ## Common Questions
 

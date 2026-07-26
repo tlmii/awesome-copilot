@@ -3,7 +3,7 @@ title: 'Agents and Subagents'
 description: 'Learn how delegated subagents differ from primary agents, when to use them, and how to launch them in VS Code and Copilot CLI.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-01
+lastUpdated: 2026-07-26
 estimatedReadingTime: '9 minutes'
 tags:
   - agents
@@ -156,6 +156,12 @@ The **complementary model strategy** lets you specify that the rubber-duck agent
 Because it runs as a sub-agent layer rather than replacing your primary model, you keep your current session model and context while the rubber-duck analysis runs in the background.
 
 > **Note**: This is an experimental feature and may change. Provide feedback via `/feedback` if you find it useful.
+
+### Multi-turn subagents
+
+*(v1.0.72+)* Multi-turn subagents are **always enabled** in Copilot CLI. This means you can send follow-up messages to a subagent while it is still running—for example, to steer its approach, add context, or ask it to try a different strategy. You don't need to wait for the subagent to finish before interacting with it.
+
+When you reopen `/tasks` to view a subagent's timeline, every prompt and response is shown in the correct order, and each prompt is labeled to indicate whether it came from the main agent or another subagent.
 
 ## Orchestration patterns that work well
 

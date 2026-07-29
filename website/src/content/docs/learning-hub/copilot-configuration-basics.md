@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-29
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -223,7 +223,7 @@ The `~/.agents/skills/` path aligns with the VS Code GitHub Copilot for Azure ex
 
 | Field | Description | Example values |
 |-------|-------------|----------------|
-| `model` | The AI model to use for this repository | `"claude-sonnet-4"`, `"gpt-4.1"`, `"claude-sonnet-5"` |
+| `model` | The AI model to use for this repository | `"claude-sonnet-4"`, `"gpt-4.1"`, `"claude-sonnet-5"`, `"claude-opus-5"` |
 | `effortLevel` | Reasoning effort level | `"low"`, `"medium"`, `"high"` |
 | `contextTier` | How much context to include | `"default"`, `"full"` |
 
@@ -533,6 +533,27 @@ The `/fork` command (v1.0.45+) copies the current session into a **new independe
 
 After forking, the new session is immediately active. Both sessions share the same history up to the fork point but accumulate changes independently from that moment forward. Use `/fork` to experiment with a risky refactor without abandoning your current working session. Since v1.0.47, forked sessions display their **origin session** name in the sessions dialog, making it easy to trace which session a fork came from.
 
+### Sessions Sidebar
+
+*(v1.0.76+, experimental)* The **Sessions sidebar** provides a split-view panel for managing multiple concurrent sessions side by side — without leaving your current terminal window. Enable it with:
+
+```
+/experimental on    # enable experimental features
+```
+
+Then open the sidebar from the session menu or with the dedicated keyboard shortcut (shown in the footer when experimental mode is active). The sidebar shows all active and backgrounded sessions with their status (idle, running, waiting), lets you switch between them with a single keypress, and highlights the currently active session. Hover-to-focus is off by default; enable it with the `sidebar.hoverFocus` setting:
+
+```json
+{
+  "sidebar.hoverFocus": true,
+  "sidebar.accentActiveSession": true
+}
+```
+
+The sidebar complements the existing session picker (`--resume`) and `/fork` workflow — use it when you're actively juggling several parallel sessions and want them all visible at once.
+
+> **Note**: The Sessions sidebar is an experimental feature in v1.0.76. Provide feedback via `/feedback`.
+
 The `/cd` command changes the working directory for the current session. Since v1.0.65, the working directory **persists when you resume a session** — if you restart the CLI and resume, you return to the same directory automatically. Changing directory also triggers discovery of custom agents in the new location, so switching to a different project loads its agents without a restart:
 
 ```
@@ -664,6 +685,14 @@ The `/usage` command displays session metrics such as the number of tokens consu
 ```
 /usage
 ```
+
+The `/limits predict` command *(v1.0.76+)* analyzes your session history to suggest a reasonable AI-credit limit for similar sessions. Run it before starting a long-running automated task to set an appropriate `sessionLimits` value — preventing unexpected credit overuse:
+
+```
+/limits predict     # suggest a credit limit based on past similar sessions
+```
+
+Use the suggested value with the `sessionLimits` config setting or pass it via `/settings` before launching an autopilot or fleet task.
 
 The `/compact` command summarizes the conversation history to free up context window space while preserving the thread of the conversation. Use it when your context is getting full but you do not want to start a fresh session:
 

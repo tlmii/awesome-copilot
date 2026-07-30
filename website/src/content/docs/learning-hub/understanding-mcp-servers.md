@@ -3,7 +3,7 @@ title: 'Understanding MCP Servers'
 description: 'Learn how Model Context Protocol servers extend GitHub Copilot with access to external tools, databases, and APIs.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-07-30
 estimatedReadingTime: '8 minutes'
 tags:
   - mcp
@@ -69,6 +69,8 @@ MCP servers are configured per-workspace. GitHub Copilot CLI discovers server de
 | `.github/mcp.json` | Repository `.github/` folder | Auto-loaded workspace config (v1.0.61+) |
 | `.vscode/mcp.json` | VS Code workspace | VS Code–compatible workspace config |
 | `devcontainer.json` | Dev container | Available when running inside a container |
+
+> **Open Plugin Spec v1 *(v1.0.74+)***: If your plugin repository includes a top-level `mcp.json` using the **Open Plugin Spec v1** format, Copilot CLI automatically discovers and loads it. This allows you to share a single `mcp.json` across tools that support the open standard, without needing separate configuration files for each.
 
 > **Security**: Workspace MCP servers are loaded **only after folder trust is confirmed**. If you haven't explicitly trusted a folder, servers defined in its config files won't start — protecting you from malicious MCP server configurations in untrusted repositories.
 
@@ -334,6 +336,7 @@ You can also open the `/mcp` manager while the agent is working to toggle server
 - **Version control carefully**: Commit `.mcp.json` or `.vscode/mcp.json` for shared server configurations, but use `.gitignore` for any files containing credentials.
 - **Test server connectivity**: Verify MCP servers start correctly before relying on them in agent workflows. Use `/mcp show` to check status and read stderr output in any failure warnings.
 - **Use the MCP allowlist (experimental)**: In high-security environments, the `MCP_ALLOWLIST` feature flag lets you validate MCP servers against a configured registry, blocking unrecognized servers from loading. MCP servers that are blocked by the allowlist policy are **hidden from `/mcp show`** to avoid confusion — only permitted servers appear in that view. This is an experimental feature for enterprise environments requiring strict control over which MCP servers are permitted.
+- **Expect faster tool loading *(v1.0.76+)***: MCP tools now load from definition-scoped snapshots, significantly reducing startup latency for sessions that use many MCP servers. Per-server cache opt-outs are available if you need live tool definitions at every startup.
 
 ### Organization Policy for Third-Party MCP Servers
 

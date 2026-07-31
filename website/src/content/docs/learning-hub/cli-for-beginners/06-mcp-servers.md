@@ -3,7 +3,7 @@ title: '06 · Connect to GitHub, Databases & APIs'
 description: 'Mirror the source chapter on MCP servers and external integrations for GitHub Copilot CLI.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-10
+lastUpdated: 2026-07-31
 ---
 
 ![Chapter 06: MCP Servers](/images/learning-hub/copilot-cli-for-beginners/06/chapter-header.png)
@@ -898,6 +898,10 @@ If a server is disabled, see the [additional `/mcp` commands](#-additional-mcp-c
 
 Beyond `/mcp show`, there are several other commands for managing your MCP servers:
 
+### Option 1: Slash commands (inside a chat session)
+
+These work when you're already inside `copilot`:
+
 | Command | What It Does |
 |---------|--------------|
 | `/mcp show` | Show all configured MCP servers and their status |
@@ -908,6 +912,23 @@ Beyond `/mcp show`, there are several other commands for managing your MCP serve
 | `/mcp disable <server-name>` | Disable a server (persists across sessions) |
 | `/mcp delete <server-name>` | Remove a server permanently |
 | `/mcp auth <server-name>` | Re-authenticate with an MCP server that uses OAuth (e.g., after switching accounts) |
+
+### Option 2: `copilot mcp` command (from your terminal)
+
+You can also manage MCP servers directly from your terminal without starting a chat session first:
+
+```bash
+# List all configured MCP servers
+copilot mcp list
+
+# Enable a server
+copilot mcp enable filesystem
+
+# Disable a server
+copilot mcp disable context7
+```
+
+> 💡 **When to use which?** Use `/mcp` slash commands when you're already in a chat session. Use `copilot mcp` from the terminal when you want to quickly check or change your server settings before starting a session.
 
 For most of this course, `/mcp show` is all you need. The other commands become useful as you manage more servers over time.
 

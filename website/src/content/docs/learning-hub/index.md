@@ -29,6 +29,12 @@ Quick-lookup resources to keep handy while you work. Browse the
 [GitHub Copilot Terminology Glossary](github-copilot-terminology-glossary/)
 for definitions of common terms and concepts.
 
+## For Developers
+
+Build applications and tools that leverage the GitHub Copilot engine directly. Learn how to
+[build with the GitHub Copilot SDK](building-with-copilot-sdk/) to embed agentic AI
+into your own applications using TypeScript, Python, Go, or .NET (Technical Preview).
+
 ## Hands-on
 
 Interactive samples and recipes to learn by doing. Jump into the

@@ -3,8 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
-estimatedReadingTime: '10 minutes'
+lastUpdated: 2026-08-01estimatedReadingTime: '10 minutes'
 tags:
   - configuration
   - setup
@@ -223,7 +222,7 @@ The `~/.agents/skills/` path aligns with the VS Code GitHub Copilot for Azure ex
 
 | Field | Description | Example values |
 |-------|-------------|----------------|
-| `model` | The AI model to use for this repository | `"claude-sonnet-4"`, `"gpt-4.1"`, `"claude-sonnet-5"` |
+| `model` | The AI model to use for this repository | `"claude-sonnet-4"`, `"gpt-4.1"`, `"claude-sonnet-5"`, `"grok-4.5"` |
 | `effortLevel` | Reasoning effort level | `"low"`, `"medium"`, `"high"` |
 | `contextTier` | How much context to include | `"default"`, `"full"` |
 
@@ -760,6 +759,16 @@ copilot --no-sandbox -p "Set up development environment with system tools"
 ```
 
 These flags apply only to the current invocation — your persisted sandbox preference remains unchanged.
+
+The `allowDevToolCaches` sandbox setting *(v1.0.78+)* controls whether sandboxed builds can access toolchain caches, package registries, and local installs. It is **on by default**, so standard build tools (npm, pip, cargo, etc.) work without extra sandbox configuration. Set it to `false` to opt out and enforce a stricter sandbox that blocks cache reads:
+
+```json
+{
+  "sandbox": {
+    "allowDevToolCaches": false
+  }
+}
+```
 
 The `--attachment` flag (available in prompt mode, `-p`) lets you attach files — images or native documents — to the initial prompt in non-interactive mode:
 

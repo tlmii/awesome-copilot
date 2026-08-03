@@ -3,7 +3,7 @@ title: 'Using the Copilot Coding Agent'
 description: 'Learn how to use GitHub Copilot coding agent to autonomously work on issues, generate pull requests, and automate development tasks.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-05-13
+lastUpdated: 2026-08-03
 estimatedReadingTime: '12 minutes'
 tags:
   - coding-agent
@@ -377,7 +377,30 @@ Since v1.0.47, `--resume` also surfaces **cloud agent sessions that haven't yet 
 
 > **Note**: Remote control replaces the earlier "steering" feature. If you see references to steering in older documentation, remote control is the updated equivalent.
 
-## Hooks and the Coding Agent
+## Controlling Approval Modes
+
+The coding agent works in **interactive mode** by default, where you approve each action. You can switch modes at any time with the `/permissions` command:
+
+```
+/permissions
+```
+
+This opens an interactive dialog to choose between:
+
+- **Interactive**: You approve each tool use — best when you want to stay in control
+- **Plan**: The agent proposes a plan before executing — good for large or risky changes
+- **Autopilot**: The agent proceeds autonomously — use with hooks and sandbox policies for guardrails
+
+You can also set the mode when launching:
+
+```bash
+copilot --mode autopilot    # start in autopilot
+copilot --plan              # start in plan mode
+```
+
+> **Tip**: Combine autopilot mode with a `preToolUse` hook that blocks dangerous shell commands. This lets the agent work quickly while keeping guardrails in place. See [Automating with Hooks](../automating-with-hooks/) for details.
+
+
 
 Hooks are especially valuable with the coding agent because they provide deterministic guardrails for autonomous work:
 

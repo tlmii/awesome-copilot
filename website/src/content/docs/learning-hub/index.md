@@ -14,7 +14,7 @@ New to GitHub Copilot? Start here to understand the tools available to you.
 
 **Canvases**: Learn [Working with Canvas Extensions](working-with-canvas-extensions/) to create and evolve interactive canvases with `/create-canvas`.
 
-**Terminal**: Looking for a guided path into GitHub Copilot from the terminal? Explore the [Copilot CLI for Beginners](cli-for-beginners/) with a text-based experience or the [YouTube video series](https://www.youtube.com/watch?v=BDxRhhs36ns&list=PL0lo9MOBetEHvO-spzKBAITkkTqv4RvNl).
+**Terminal**: Looking for a guided path into GitHub Copilot from the terminal? Explore the [Copilot CLI for Beginners](cli-for-beginners/) with a text-based experience or the [YouTube video series](https://www.youtube.com/watch?v=BDxRhhs36ns&list=PL0lo9MOBetEHvO-spzKBAITkkTqv4RvNl). Once you're up and running, see [Managing Multiple Sessions](managing-multiple-sessions/) for tips on parallel work with the Sessions sidebar and `/new-worktree`.
 
 ## Fundamentals
 

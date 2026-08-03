@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-03
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -223,7 +223,7 @@ The `~/.agents/skills/` path aligns with the VS Code GitHub Copilot for Azure ex
 
 | Field | Description | Example values |
 |-------|-------------|----------------|
-| `model` | The AI model to use for this repository | `"claude-sonnet-4"`, `"gpt-4.1"`, `"claude-sonnet-5"` |
+| `model` | The AI model to use for this repository | `"claude-sonnet-4"`, `"gpt-4.1"`, `"claude-sonnet-5"`, `"grok-4.5"` |
 | `effortLevel` | Reasoning effort level | `"low"`, `"medium"`, `"high"` |
 | `contextTier` | How much context to include | `"default"`, `"full"` |
 
@@ -760,6 +760,18 @@ copilot --no-sandbox -p "Set up development environment with system tools"
 ```
 
 These flags apply only to the current invocation — your persisted sandbox preference remains unchanged.
+
+### Logging In
+
+The `copilot login` command authenticates with GitHub. On local interactive terminals, it defaults to a **browser-based OAuth flow** (v1.0.77+):
+
+```bash
+copilot login           # opens browser (default on local terminals)
+copilot login --web-flow    # explicitly use browser OAuth
+copilot login --device-code # use device code flow (default on remote/headless terminals)
+```
+
+You can also pick a login method interactively with the `/login` command from inside a session. The device code flow is still available and remains the default in SSH, CI, and other headless environments.
 
 The `--attachment` flag (available in prompt mode, `-p`) lets you attach files — images or native documents — to the initial prompt in non-interactive mode:
 

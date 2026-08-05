@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-05
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -73,6 +73,12 @@ The `plugin.json` manifest declares what the plugin contains:
   ]
 }
 ```
+
+### Open Plugin Spec and mcp.json Support
+
+As of v1.0.74+, Copilot CLI also supports **Open Plugin Spec v1** plugin manifests. This enables compatibility with plugins authored for other tools that follow the Open Plugin Spec standard.
+
+Copilot CLI also recognizes `mcp.json` as a standard configuration file for MCP server definitions. If your project or plugin includes a top-level `mcp.json`, Copilot will load the MCP server configurations from it automatically — no additional setup required. This makes it easier to share MCP configurations with other tools that recognize the same file.
 
 ## Why Use Plugins?
 
@@ -221,6 +227,20 @@ copilot plugin marketplace update
 # Remove a plugin
 copilot plugin uninstall my-plugin
 ```
+
+### Automatic Updates for First-Party Plugins
+
+First-party plugins (official GitHub Copilot plugins from the `copilot-plugins` marketplace) automatically update to the latest version at session start (v1.0.78+). You do not need to run `copilot plugin update` manually for these — updates are applied whenever you start a new Copilot CLI session.
+
+### Enabling and Disabling Plugin Components
+
+The `/plugins` command (v1.0.76+) lets you enable or disable individual components from installed plugins without uninstalling the plugin entirely:
+
+```
+/plugins          # open the plugin management UI
+```
+
+From the `/plugins` interface you can toggle individual **plugins**, **instructions**, **agents**, **LSP servers**, and **hooks** on or off. This is useful when you want to temporarily disable a hook or instruction without removing the entire plugin.
 
 ### Loading Plugins from a Local Directory
 

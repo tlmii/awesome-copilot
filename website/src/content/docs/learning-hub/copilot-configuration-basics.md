@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-05
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -507,6 +507,14 @@ You can also press **x** on a highlighted session in the session picker (`--resu
 
 In the session picker, press **`s`** to cycle the sort order: relevance, last used, created, or name. The picker also shows the branch name and idle/in-use status for each session.
 
+The **Sessions sidebar** (v1.0.76+, experimental) provides a persistent side panel for managing multiple concurrent sessions without opening the session picker. Enable it with `/experimental on`, then navigate it with keyboard or mouse:
+
+```
+/experimental on    # enable experimental features including the Sessions sidebar
+```
+
+The sidebar lets you switch between sessions, spawn new ones, and see their status at a glance. Use arrow keys to move through the list, **Enter** or a click to switch to a session, **n** to spawn a new session, and **x** twice to close one. To keep sidebar sessions available across restarts, the sidebar persists its session list by default.
+
 The `/rewind` command opens a timeline picker that lets you roll back the conversation to any earlier point in history, reverting both the conversation and any file changes made after that point. You can also trigger it by pressing **double-Esc**:
 
 ```
@@ -541,13 +549,14 @@ The `/cd` command changes the working directory for the current session. Since v
 
 This is useful when you have multiple backgrounded sessions each focused on a different project directory.
 
-The `/worktree` command (v1.0.61+, also aliased `/move`) creates a new git worktree and switches into it, moving any uncommitted changes along. This lets you start working on a parallel branch without leaving your current terminal session:
+The `/worktree` command (v1.0.61+) creates a new git worktree and switches into it, leaving your uncommitted changes in the current worktree. In v1.0.72+, the related `/move` command became a distinct command that **carries your uncommitted changes** into the new worktree — use `/move` when you want to take your work-in-progress along:
 
 ```
-/worktree my-feature-branch
+/worktree my-feature-branch      # create a new worktree, leave uncommitted changes behind
+/move my-feature-branch          # create a new worktree, carry uncommitted changes with you
 ```
 
-In v1.0.66+, you can pass a task description to `/worktree` to name the branch from the task and immediately run the task as the first prompt in the new worktree — all in one step:
+In v1.0.66+, you can pass a task description to `/worktree` or `/move` to name the branch from the task and immediately run the task as the first prompt in the new worktree — all in one step:
 
 ```
 /worktree fix the login redirect
@@ -555,7 +564,13 @@ In v1.0.66+, you can pass a task description to `/worktree` to name the branch f
 
 This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
 
-After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
+The experimental `/new-worktree` command (v1.0.78+) creates a new git worktree **and starts a fresh conversation** in it, rather than continuing the current one. Use this when you want a clean context alongside your current session:
+
+```
+/new-worktree my-parallel-task
+```
+
+In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
 
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
 
@@ -702,6 +717,14 @@ The `/allow-all` command (also accessible as `/yolo`) enables autopilot mode, wh
 > **Note**: `/allow-all on` permissions persist after `/clear` starts a new session, so you don't need to re-enable it each time.
 
 > **ACP clients (v1.0.39+)**: ACP clients can also toggle allow-all mode programmatically via session configuration, without issuing a slash command. This is useful for automated pipelines that drive Copilot CLI through the ACP protocol.
+
+The `/permissions` command (v1.0.78+) provides a quick way to switch between the different tool-approval modes without typing the full `/allow-all` syntax:
+
+```
+/permissions      # open the approval mode picker
+```
+
+Use `/permissions` as a faster alternative to `/allow-all` when you want to change approval mode mid-session.
 
 The `/autopilot` command (v1.0.45+) is a quick in-session toggle that switches between **interactive mode** (where the agent pauses to ask for confirmation before tool use) and **autopilot mode** (where it runs autonomously). Unlike `/allow-all` which specifically controls whether tool permissions are required, `/autopilot` toggles the overall agent mode:
 

@@ -3,7 +3,7 @@ title: 'Getting Started with the GitHub Copilot app'
 description: 'Learn about the GitHub Copilot app, a desktop experience built for agent-native development. Understand its key features and who it''s for.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-06-17
+lastUpdated: 2026-08-07
 estimatedReadingTime: '8 minutes'
 tags:
   - copilot-app
@@ -49,6 +49,18 @@ The central hub of the Copilot app is the **My Work** view. This dashboard shows
 - **Overall status**: A quick overview of what's in progress, what's done, and what's blocked
 
 Instead of checking GitHub, your CLI, and VS Code for updates, everything is in one place.
+
+### Sessions Tab
+
+The **Sessions tab** and sidebar let you manage multiple concurrent sessions from a single view. You can:
+
+- Switch between active sessions without losing context
+- See at a glance which sessions are running, paused, or complete
+- Keep multiple parallel workstreams visible side-by-side
+
+Each session remains independent — switching sessions does not restart MCP servers or rebuild hook state, so work running in another session is never interrupted.
+
+To create a new session in a fresh worktree from within an existing session, use the `/worktree new` command. This spins up an isolated worktree and starts a new conversation in it, without leaving your current session.
 
 ### Automations
 

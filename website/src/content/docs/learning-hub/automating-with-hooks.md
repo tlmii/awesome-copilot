@@ -3,7 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-07
 estimatedReadingTime: '8 minutes'
 tags:
   - hooks
@@ -649,6 +649,17 @@ echo "Pre-commit checks passed ✅"
 - **Document setup requirements**: If hooks depend on tools being installed (Prettier, ESLint), document this in the README.
 - **Test locally first**: Run hook scripts manually before relying on them in agent sessions.
 - **Layer hooks, don't overload**: Use multiple hook entries for independent checks rather than one monolithic script.
+
+## Enabling and Disabling Hooks
+
+*(v1.0.76+)* You can temporarily enable or disable individual hooks from within an interactive Copilot CLI session using the `/plugins` command, without modifying any configuration files:
+
+```
+/plugins disable --hook my-hook-name
+/plugins enable --hook my-hook-name
+```
+
+This is useful when you want to skip a hook for a particular session (for example, bypassing a slow linter while iterating quickly) without permanently removing it from your configuration. Disabled hooks remain in your `hooks.json` and are automatically re-enabled in new sessions.
 
 ## Common Questions
 

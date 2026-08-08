@@ -3,7 +3,7 @@ title: 'Using the Copilot Coding Agent'
 description: 'Learn how to use GitHub Copilot coding agent to autonomously work on issues, generate pull requests, and automate development tasks.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-05-13
+lastUpdated: 2026-08-08
 estimatedReadingTime: '12 minutes'
 tags:
   - coding-agent
@@ -131,6 +131,16 @@ Or provide more specific direction:
 @copilot implement the user avatar upload feature described above.
 Use the existing FileUpload component and S3 service.
 ```
+
+### From the CLI (Plan-First Autopilot)
+
+You can combine `--plan` with `--mode autopilot` to have the agent generate a plan first and then implement it automatically without waiting for your approval at each step:
+
+```bash
+copilot --plan --mode autopilot
+```
+
+This is useful when you want to review the overall approach upfront but then let the agent execute without interruption. The agent presents its plan, you can accept or refine it, and then it proceeds straight through to implementation on autopilot.
 
 ### Using Custom Agents
 
@@ -333,6 +343,16 @@ This repository provides a curated collection of agents, skills, and hooks desig
 4. The hooks will run automatically during coding agent sessions
 
 > **Example workflow**: Combine a `test-specialist` agent with a `database-migrations` skill and a linting hook. Assign an issue to the coding agent using the test-specialist agent — it will automatically pick up the migrations skill when relevant, and the hook ensures all code is formatted before completion.
+
+## Managing Approval Modes
+
+The `/permissions` command lets you switch between approval modes mid-session, controlling how much autonomy the coding agent has:
+
+```
+/permissions          # view current approval mode
+```
+
+The available modes control how tool use is approved: you can require approval for every action, allow automatic approval for safe operations, or grant full autopilot access. Changing the mode mid-session is useful when you want to review early decisions carefully and then let the agent run autonomously once you trust the direction.
 
 ## Remote Control
 

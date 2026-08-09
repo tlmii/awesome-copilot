@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-09
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -507,11 +507,21 @@ You can also press **x** on a highlighted session in the session picker (`--resu
 
 In the session picker, press **`s`** to cycle the sort order: relevance, last used, created, or name. The picker also shows the branch name and idle/in-use status for each session.
 
-The `/rewind` command opens a timeline picker that lets you roll back the conversation to any earlier point in history, reverting both the conversation and any file changes made after that point. You can also trigger it by pressing **double-Esc**:
+In v1.0.79-5+, the CLI includes a **Sessions tab and sidebar** that lets you manage multiple concurrent sessions without leaving your current session. Open it from the sidebar or with:
+
+```
+/sessions          # open the Sessions tab
+```
+
+From the Sessions tab you can view all running sessions, switch between them, see their status (idle, in-use, finished), and start new ones. This makes it practical to run several parallel tasks — for example, a feature branch in one session and a bug fix in another — and monitor them from a single view.
+
+The `/rewind` command opens a timeline picker that lets you roll back the conversation to any earlier point in history. You can also trigger it by pressing **double-Esc**:
 
 ```
 /rewind
 ```
+
+When rewinding, you are offered a choice: **conversation only** (rolls back the chat history while leaving files as-is) or **conversation + files** (also reverts file changes made after the selected point). As of v1.0.78, `/rewind` no longer requires git — it restores only the files Copilot itself changed, and skips any file whose contents no longer match what Copilot last wrote. This means `/rewind` works correctly even in repositories without git or when files were edited outside of Copilot since the target point.
 
 Use `/rewind` when you want to branch off from a different point in the conversation, rather than just undoing the most recent turn.
 
@@ -557,6 +567,15 @@ This creates a branch named from your task description and begins working on it 
 
 After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
 
+Use `/worktree new` *(v1.0.79-3+)* to start a **fresh session** in a brand-new worktree without moving any changes from your current session. This is useful when you want to kick off parallel work while keeping your current session exactly where it is:
+
+```
+/worktree new          # open a new session in a new worktree
+/worktree new fix/login  # new worktree with a specific branch name
+```
+
+The `worktreeBaseRef` setting *(v1.0.79-8+)* controls whether `/worktree`, `/worktree new`, and `--worktree` start from `HEAD` or the remote default branch. All three default to `HEAD`; set `worktreeBaseRef` to `"remote"` in your `settings.json` to have new worktrees branch from the remote default branch instead.
+
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
 
 ```
@@ -598,6 +617,14 @@ The `/share html` command exports the current session — including conversation
 ```
 
 The exported file contains everything needed to view the session without a network connection and can be shared with teammates or stored for later reference. This complements `/share` (which shares via URL) for cases where an offline or attached format is preferred.
+
+The `/app` command *(v1.0.79-7+, requires GitHub Copilot app 1.1.3 or later)* opens the **current CLI session** directly in the GitHub Copilot desktop app. This lets you continue your terminal session in the app's richer visual interface — including its parallel sessions view and worktree management — without losing the current session state:
+
+```
+/app        # open this session in the GitHub Copilot desktop app
+```
+
+Use `/app` when you want to switch from a terminal workflow to a GUI-driven one mid-session, or to hand off an in-progress task to the app for parallel management alongside other sessions.
 
 The `/chronicle` command opens an interactive timeline of everything the agent has done in the current session. It shows file changes, tool calls, and conversation turns in chronological order, letting you review the full arc of the session at a glance:
 
@@ -717,6 +744,14 @@ Use `/autopilot` when you want to flip between supervised and unsupervised opera
 
 > **Read-only `gh` CLI commands (v1.0.46+)**: Read-only `gh` commands — such as `gh issue list`, `gh pr view`, `gh run status`, and other commands that don't write to GitHub — are **automatically approved** without a permission prompt. Only commands that write to GitHub (like creating issues, merging PRs) still require explicit approval. This reduces friction during exploratory sessions where you frequently check issue or PR status.
 
+The `/permissions` command *(v1.0.78+)* provides a quick in-session way to switch between approval modes without remembering the full `/allow-all` subcommand syntax. It opens an interactive picker where you choose your desired mode:
+
+```
+/permissions        # open the approval mode picker
+```
+
+Use it as a friendly alternative to `/allow-all on` / `/allow-all off` / `/allow-all auto` when you want a visual overview of available modes rather than typing subcommands directly.
+
 The `--effort` flag (shorthand for `--reasoning-effort`) controls how much computational reasoning the model applies to a request:
 
 ```bash
@@ -744,6 +779,12 @@ copilot --plan          # start in plan mode (propose without executing)
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
 
+As of v1.0.79-7+, you can combine `--plan` with `--mode autopilot` to have Copilot first produce a plan and then immediately implement it in autopilot mode, without stopping to ask for approval between the plan and execution phases:
+
+```bash
+copilot --plan --mode autopilot -p "Refactor the auth module to use JWT"
+```
+
 The `--max-autopilot-continues` flag controls how many times Copilot can automatically continue in autopilot mode before pausing for confirmation. The default is 5:
 
 ```bash
@@ -760,6 +801,8 @@ copilot --no-sandbox -p "Set up development environment with system tools"
 ```
 
 These flags apply only to the current invocation — your persisted sandbox preference remains unchanged.
+
+> **Breaking change (v1.0.79-8)**: The sandbox authentication settings have been renamed. `sandbox.gitAuth` and `sandbox.ghAuth` are now `sandbox.auth.git` and `sandbox.auth.gh` respectively. The old keys are no longer read and are silently ignored — update your `settings.json` and any managed/MDM policy files accordingly.
 
 The `--attachment` flag (available in prompt mode, `-p`) lets you attach files — images or native documents — to the initial prompt in non-interactive mode:
 

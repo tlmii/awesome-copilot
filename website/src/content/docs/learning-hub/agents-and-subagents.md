@@ -3,7 +3,7 @@ title: 'Agents and Subagents'
 description: 'Learn how delegated subagents differ from primary agents, when to use them, and how to launch them in VS Code and Copilot CLI.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-01
+lastUpdated: 2026-08-09
 estimatedReadingTime: '9 minutes'
 tags:
   - agents
@@ -133,6 +133,8 @@ The important behavior is different from a single chat turn:
 - subagents share the same filesystem, so overlapping writes should be avoided
 
 That makes `/fleet` a practical way to launch subagents even if you are not authoring custom agent files yourself.
+
+Once a `/fleet` session is running, use the **`/tasks`** command to navigate and monitor its subagents. In v1.0.79-7+, the `/tasks` view has been significantly improved with nested tree browsing, `current`/`all` and finished-task filters, and a live timeline you can steer while agents are running.
 
 ### Rubber-duck agent
 

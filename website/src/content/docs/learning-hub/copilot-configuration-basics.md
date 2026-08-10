@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-10
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -445,9 +445,20 @@ These files follow the same format as `config.json` and are loaded after the glo
 
 The model picker opens in a **full-screen view** with inline reasoning effort adjustment. Use the **← / →** arrow keys to change the reasoning effort level (`low`, `medium`, `high`) directly from the picker without leaving the session. The current reasoning effort level is also displayed in the model header (e.g., `claude-sonnet-4.6 (high)`) so you always know which level is active.
 
+*(v1.0.79+)* The model picker groups models into **Recent**, **Recommended**, **New**, and other sections for easier browsing. Use **Shift+Tab** to switch between grouping views.
+
 **Auto mode and server-side model routing** (v1.0.43+): When you select **Auto** as your model, the CLI uses server-side model routing for real-time model selection. Instead of locking in a single model at session start, Auto mode evaluates each request and routes it to the most appropriate model dynamically. This means straightforward questions can be handled by a faster model while complex reasoning tasks are automatically escalated — without you needing to switch models manually.
 
 **Model family aliases** (v1.0.64+): Instead of typing a full model name, you can use short family aliases in the model setting: `opus`, `sonnet`, `haiku` (Anthropic), and `gpt`, `gemini` (Google/OpenAI). The CLI resolves the alias to the latest available model in that family. This is especially useful in scripts or configuration files where you want to track the best model in a family without hardcoding a version string.
+
+**Session-scoped model selection** *(v1.0.79+)*: `/model` is now **session-scoped by default** — changing the model in one session no longer affects other sessions or future sessions. To set a persistent model default for all future sessions, use `/config model` instead:
+
+```
+/model                    # change model for the current session only
+/config model             # set the default model for all future sessions
+```
+
+This separation makes it safe to experiment with different models in one session without inadvertently changing your long-term preference.
 
 ### CLI Session Commands
 
@@ -555,6 +566,15 @@ In v1.0.66+, you can pass a task description to `/worktree` to name the branch f
 
 This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
 
+*(v1.0.79+)* Use `/worktree new` to start a **new session** in a new worktree — unlike `/worktree` which switches the current session into the new worktree, `/worktree new` opens the worktree as a separate parallel session:
+
+```
+/worktree new             # start a new session in a fresh worktree
+/worktree new fix the bug # new session + task description to seed the branch name
+```
+
+By default, all three variants (`/worktree`, `/worktree new`, and `--worktree` at startup) start from the current **HEAD**. Set `worktreeBaseRef` in your settings to change the default starting point to the remote default branch instead.
+
 After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
 
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
@@ -571,6 +591,15 @@ The interval can be specified in seconds (`s`), minutes (`m`), or hours (`h`), a
 > **Experimental**: `/every`, `/loop`, and `/after` are part of the experimental feature set. They appear in the `/experimental` slash command list — enable experimental features if they are not already visible in your current session.
 
 > **Note**: Scheduled prompts run in the background of the current session and use your active model. They share the session context window, so very frequent scheduling with long responses may consume context rapidly. Use `/compact` if context usage becomes a concern.
+
+*(v1.0.79+)* **Prompt queuing** lets you line up prompts, shell commands, and supported slash commands in a local session to run sequentially after the current task finishes. Instead of waiting for Copilot to finish before typing your next instruction, you can queue up follow-on work while the agent is still running:
+
+```
+# Type your next prompt while the agent is busy — it queues automatically
+# You can also queue shell commands and slash commands the same way
+```
+
+This is useful for chaining dependent tasks: queue "now run the tests" after "fix the failing test" so the session moves straight to the next step without you watching and waiting.
 
 The `/pr auto` command *(v1.0.66+)* starts a self-paced automation loop that drives the current pull request to CI green. Rather than running continuously, it fixes one failing item per run and paces itself around CI checks to avoid redundant work:
 
@@ -741,6 +770,14 @@ copilot --mode agent    # start in agent mode (autonomous tool use)
 copilot --autopilot     # alias for --mode autopilot (allow-all)
 copilot --plan          # start in plan mode (propose without executing)
 ```
+
+*(v1.0.79+)* Combine `--plan` with `--mode autopilot` to **plan first, then implement** without pausing for approval between phases:
+
+```bash
+copilot --plan --mode autopilot "Add rate limiting to the login endpoint"
+```
+
+This is useful when you want Copilot to produce a plan and then immediately execute it autonomously — ideal for well-defined tasks where you trust the agent to proceed without a checkpoint.
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
 

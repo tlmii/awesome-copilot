@@ -3,7 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-11
 estimatedReadingTime: '8 minutes'
 tags:
   - hooks
@@ -650,6 +650,38 @@ echo "Pre-commit checks passed ✅"
 - **Test locally first**: Run hook scripts manually before relying on them in agent sessions.
 - **Layer hooks, don't overload**: Use multiple hook entries for independent checks rather than one monolithic script.
 
+## Community Hooks from Awesome Copilot
+
+The [hooks directory](https://github.com/github/awesome-copilot/tree/main/hooks) in this repository contains ready-to-use hook bundles you can drop into any project. Each hook is a self-contained folder with a `hooks.json` and any required scripts.
+
+### Available Hooks
+
+| Hook | Events | Description |
+|------|--------|-------------|
+| **[dependency-license-checker](https://github.com/github/awesome-copilot/tree/main/hooks/dependency-license-checker)** | `sessionEnd` | Scans newly added npm, pip, Go, Ruby, and Rust dependencies for copyleft/restrictive licenses (GPL, AGPL, SSPL). Blocks the session or warns based on configuration. |
+| **[fix-broken-links](https://github.com/github/awesome-copilot/tree/main/hooks/fix-broken-links)** | `postToolUse` | Checks changed web files (HTML, Markdown) for broken hyperlinks and poor anchor text after each tool use. Offers an interactive fix menu. |
+| **[governance-audit](https://github.com/github/awesome-copilot/tree/main/hooks/governance-audit)** | `sessionStart`, `userPromptSubmitted`, `sessionEnd` | Logs session activity and scans user prompts for potential security threats. Produces a structured audit trail for compliance. |
+| **[secrets-scanner](https://github.com/github/awesome-copilot/tree/main/hooks/secrets-scanner)** | `sessionEnd` | Scans modified files for accidentally leaked credentials, API keys, private keys, and connection strings across 20+ secret categories. Can block commits or warn. |
+| **[session-auto-commit](https://github.com/github/awesome-copilot/tree/main/hooks/session-auto-commit)** | `sessionEnd` | Automatically stages, commits, and pushes all changes when a session ends. Prevents losing work from long agentic sessions. |
+| **[session-logger](https://github.com/github/awesome-copilot/tree/main/hooks/session-logger)** | `sessionStart`, `userPromptSubmitted`, `sessionEnd` | Records session start/end times, working directories, and prompt events in structured JSON format for audit and analytics. |
+| **[tool-guardian](https://github.com/github/awesome-copilot/tree/main/hooks/tool-guardian)** | `preToolUse` | Blocks dangerous tool operations before execution: `rm -rf /`, force pushes to main, `DROP TABLE`, `chmod 777`, and other high-risk patterns across 6 threat categories. |
+
+### Installing a Community Hook
+
+1. Copy the hook folder into your repository's `.github/hooks/` directory:
+   ```bash
+   cp -r hooks/tool-guardian .github/hooks/
+   ```
+2. Make any included scripts executable:
+   ```bash
+   chmod +x .github/hooks/tool-guardian/*.sh
+   ```
+3. Commit both the `hooks.json` and any scripts to your repository's default branch.
+
+The hook activates automatically for the next Copilot agent session.
+
+> **Tip**: Combine hooks for defence-in-depth. For example, pair `tool-guardian` (blocks dangerous commands) with `secrets-scanner` (catches leaked credentials) and `governance-audit` (provides an audit trail).
+
 ## Common Questions
 
 **Q: Where do I put hooks configuration files?**
@@ -681,6 +713,7 @@ A: Yes. Hooks are especially valuable with the coding agent because they provide
 
 ## Next Steps
 
+- **Browse Community Hooks**: [Hooks Directory](https://github.com/github/awesome-copilot/tree/main/hooks) — Ready-to-use hook bundles for security, compliance, and automation
 - **Build Agents**: [Building Custom Agents](../building-custom-agents/) — Create agents that complement hooks
 - **Automate Further**: [Using the Copilot Coding Agent](../using-copilot-coding-agent/) — Run hooks in autonomous agent sessions
 

@@ -3,7 +3,7 @@ title: 'Agentic Workflows'
 description: 'Learn what GitHub Agentic Workflows are, how to use community workflows from Awesome Copilot, and how to contribute your own.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-02-27
+lastUpdated: 2026-08-11
 estimatedReadingTime: '7 minutes'
 tags:
   - workflows
@@ -155,13 +155,48 @@ safe-outputs:
 ---
 ```
 
+For workflows that require bash scripting, GitHub API access, or slash command triggers, use the extended form:
+
+```yaml
+---
+name: "Relevance Check"
+description: "Slash command to evaluate whether an issue or PR is still relevant"
+on:
+  slash_command:
+    name: relevance-check
+  roles: [admin, maintainer, write]
+engine:
+  id: copilot
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+tools:
+  github:
+    toolsets: [default]
+  bash: true
+timeout-minutes: 20
+safe-outputs:
+  add-comment:
+    max: 1
+---
+```
+
 **Required fields**:
 - `name` — human-readable workflow name
 - `description` — concise summary of the workflow's purpose
 
 **Workflow fields**:
-- `on` — trigger configuration (schedules, events, slash commands)
+- `on` — trigger configuration. Common triggers:
+  - `schedule: daily` / `schedule: weekly` — cron-style schedule
+  - `workflow_dispatch:` — manual trigger from the Actions UI
+  - `slash_command: name: my-command` — triggered by `/my-command` in an issue or PR comment, with optional `roles` to restrict who can invoke it
 - `permissions` — GitHub API scopes (use least-privilege)
+- `engine` — the AI engine to use. Use `id: copilot` or shorthand `engine: copilot` to run a Copilot coding agent
+- `tools` — tool access configuration:
+  - `github: toolsets: [default]` — grants GitHub API access (read issues, PRs, commits, etc.)
+  - `bash: true` — allows the agent to run shell commands
+- `timeout-minutes` — maximum execution time in minutes (set for long-running analysis workflows)
 - `safe-outputs` — guardrails for what the agent can create or modify
 
 ### Step 3: Write Clear Instructions

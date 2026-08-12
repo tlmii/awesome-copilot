@@ -3,7 +3,7 @@ title: 'Understanding Copilot Context'
 description: 'Learn how GitHub Copilot uses context from your code, workspace, and conversation to generate relevant suggestions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2025-11-28
+lastUpdated: 2026-08-12
 estimatedReadingTime: '8 minutes'
 tags:
   - context
@@ -145,6 +145,8 @@ Maximize GitHub Copilot's effectiveness by providing clear, relevant context:
 **Q: Does Copilot see my entire repository?**
 
 A: No, Copilot doesn't automatically analyze all files in your repository. It focuses on open files, recently modified files, and files directly referenced by your current work. For large codebases, this selective approach ensures fast response times while still providing relevant context.
+
+> **Large monorepo search** *(Copilot CLI v1.0.79+)*: Copilot CLI now uses [**tgrep**](https://github.com/microsoft/tgrep) — a trigram-indexed grep — instead of ripgrep for code search in large monorepos. Trigram indexing dramatically speeds up regex searches across very large codebases by pre-building a search index, so code lookup in large monorepos is significantly faster.
 
 **Q: How do I know what context Copilot is using?**
 

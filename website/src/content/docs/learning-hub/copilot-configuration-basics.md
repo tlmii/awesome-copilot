@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-12
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -449,6 +449,15 @@ The model picker opens in a **full-screen view** with inline reasoning effort ad
 
 **Model family aliases** (v1.0.64+): Instead of typing a full model name, you can use short family aliases in the model setting: `opus`, `sonnet`, `haiku` (Anthropic), and `gpt`, `gemini` (Google/OpenAI). The CLI resolves the alias to the latest available model in that family. This is especially useful in scripts or configuration files where you want to track the best model in a family without hardcoding a version string.
 
+**Model picker groups** (v1.0.79+): The model picker organises models into **Recent**, **Recommended**, **New**, and other sections so you can quickly find relevant models. Press **Shift+Tab** to cycle between grouping views.
+
+**Session-scoped `/model`** (v1.0.79+): `/model` now changes the model for the current session only. To set a default model for all future sessions, use `/config model`:
+
+```
+/model claude-sonnet-4.6      # change model for this session only
+/config model claude-sonnet-4.6  # set the default for future sessions
+```
+
 ### CLI Session Commands
 
 The `/settings` command (v1.0.61+) opens an interactive dialog to browse and edit all user settings in one place. Use it to discover available settings, toggle options, and update values without manually editing your config file:
@@ -556,6 +565,22 @@ In v1.0.66+, you can pass a task description to `/worktree` to name the branch f
 This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
 
 After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
+
+**`/worktree new`** (v1.0.79+): Start a fresh session in a new worktree without specifying a task or branch name:
+
+```
+/worktree new                  # create a new worktree and start a new session in it
+```
+
+**`worktreeBaseRef` setting** (v1.0.79+): Controls whether `/worktree`, `/worktree new`, and `--worktree` start from `HEAD` (the default for all three) or from the remote default branch:
+
+```json
+{
+  "worktreeBaseRef": "HEAD"          // default — branch from your current HEAD
+}
+```
+
+Set `worktreeBaseRef` to the name of your remote default branch (e.g., `"main"`) if you always want new worktrees to start from the latest remote state rather than your current local commit.
 
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
 
@@ -717,6 +742,14 @@ Use `/autopilot` when you want to flip between supervised and unsupervised opera
 
 > **Read-only `gh` CLI commands (v1.0.46+)**: Read-only `gh` commands — such as `gh issue list`, `gh pr view`, `gh run status`, and other commands that don't write to GitHub — are **automatically approved** without a permission prompt. Only commands that write to GitHub (like creating issues, merging PRs) still require explicit approval. This reduces friction during exploratory sessions where you frequently check issue or PR status.
 
+The `/permissions` command *(v1.0.78+)* lets you switch between approval modes interactively — a friendlier alternative to `/allow-all` with a guided picker:
+
+```
+/permissions       # open the approval mode picker
+```
+
+Use `/permissions` to choose between interactive (ask for each tool), auto (LLM judge decides), or allow-all (approve everything) without remembering the exact subcommands for each mode.
+
 The `--effort` flag (shorthand for `--reasoning-effort`) controls how much computational reasoning the model applies to a request:
 
 ```bash
@@ -744,6 +777,14 @@ copilot --plan          # start in plan mode (propose without executing)
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
 
+**Combining `--plan` with `--mode autopilot`** *(v1.0.79+)*: You can now combine both flags to have the CLI first produce a plan, then immediately implement it without waiting for manual approval:
+
+```bash
+copilot --plan --mode autopilot "Refactor the authentication module"
+```
+
+This is useful for non-interactive pipelines where you want the structured reasoning of plan mode followed by fully autonomous execution.
+
 The `--max-autopilot-continues` flag controls how many times Copilot can automatically continue in autopilot mode before pausing for confirmation. The default is 5:
 
 ```bash
@@ -760,6 +801,8 @@ copilot --no-sandbox -p "Set up development environment with system tools"
 ```
 
 These flags apply only to the current invocation — your persisted sandbox preference remains unchanged.
+
+> **BREAKING (v1.0.79)**: The sandbox setting `allowDevToolCaches` has been renamed to `allowDevToolAccess`. The old key is no longer read and silently ignored, so an existing `false` opt-out will revert to the default (on). If you have `allowDevToolCaches` in `settings.json` or a managed/MDM policy, rename it to `allowDevToolAccess`.
 
 The `--attachment` flag (available in prompt mode, `-p`) lets you attach files — images or native documents — to the initial prompt in non-interactive mode:
 

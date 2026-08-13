@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-13
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -160,6 +160,24 @@ To automatically register an additional marketplace for everyone working in a re
 
 With this in place, team members automatically get the `my-org-plugins` marketplace available without running a separate `marketplace add` command. This replaces the older `marketplaces` setting, which was removed in v1.0.16.
 
+### Auto-Updating Marketplace Plugins
+
+*(v1.0.79+)* To keep plugins from an extra marketplace automatically up to date at session start, add `"autoUpdate": true` to the marketplace entry:
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "name": "my-org-plugins",
+      "source": "my-org/internal-plugins",
+      "autoUpdate": true
+    }
+  ]
+}
+```
+
+With `autoUpdate` enabled, Copilot fetches the latest plugin versions from that marketplace each time you start a session. This is useful for internal marketplaces where you always want the newest plugins without running `copilot plugin update` manually.
+
 ### Pinning a Marketplace to a Specific Commit
 
 *(v1.0.70+)* To ensure reproducibility and prevent unintended updates, you can pin a marketplace to an exact commit SHA using the `sha` field in the source configuration:
@@ -247,6 +265,10 @@ When you install a plugin, its components become available to Copilot CLI automa
 - **MCP servers** extend the tools available to agents
 
 You don't need to do any additional configuration after installing — the plugin's components integrate seamlessly into your workflow. Plugins take effect immediately after installation without requiring a Copilot CLI restart.
+
+### Deferred Tool Loading
+
+*(v1.0.79+)* Plugin custom agents can declare `deferred-tool-loading: true` in their frontmatter. When set, the agent's additional tool set is loaded only when the agent is first selected, rather than at session startup. This reduces startup overhead for sessions where the agent is never used, and is particularly useful for plugins that bundle many agents.
 
 ## Plugins from This Repository
 

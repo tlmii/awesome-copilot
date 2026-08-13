@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-13
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -232,6 +232,24 @@ In addition to model and effort settings, this file can also extend the URL, MCP
 **Why use this**: Pin a model when your team has agreed on the right cost/quality tradeoff for a project. Pin a high effort level for codebases where mistakes are expensive. Deny lists let you block specific MCP servers or URLs that aren't appropriate for a given project's security posture.
 
 > **Trust requirement**: The repository must be explicitly trusted by the user for these settings to take effect. This prevents untrusted repositories from changing your model or access restrictions without your knowledge.
+
+### Setting the Default Model via `/config model`
+
+*(v1.0.79+)* The `/model` command is **session-scoped by default** — switching the model in one session does not affect future sessions. To set the model that all new sessions start with, use `/config model` instead:
+
+```
+/config model claude-sonnet-4
+```
+
+This persists the choice to your user configuration so future sessions open with the selected model, while `/model` continues to work as an in-session override without changing your default.
+
+**Summary of model selection options**:
+
+| Method | Scope | Use when |
+|--------|-------|----------|
+| `/model <name>` | Current session only | You want a different model for this task |
+| `/config model <name>` | All future sessions (default) | You want to change your permanent default |
+| `.github/copilot/settings.json` | All sessions in a trusted repo | Your team agrees on a model for the project |
 
 ### Custom Agents
 
@@ -507,6 +525,8 @@ You can also press **x** on a highlighted session in the session picker (`--resu
 
 In the session picker, press **`s`** to cycle the sort order: relevance, last used, created, or name. The picker also shows the branch name and idle/in-use status for each session.
 
+*(v1.0.79+)* **Sessions tab for multiple concurrent sessions**: The CLI now includes a **Sessions tab** and sidebar entry for managing multiple active sessions at once. From the Sessions view, you can see all your running sessions, switch between them, and monitor their progress without leaving the CLI. This makes it easier to run parallel tasks — for example, one session fixing a bug while another writes documentation.
+
 The `/rewind` command opens a timeline picker that lets you roll back the conversation to any earlier point in history, reverting both the conversation and any file changes made after that point. You can also trigger it by pressing **double-Esc**:
 
 ```
@@ -555,7 +575,17 @@ In v1.0.66+, you can pass a task description to `/worktree` to name the branch f
 
 This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
 
+*(v1.0.79+)* Use `/worktree new` to **start a brand-new session** in a new worktree. Unlike `/worktree <branch>` which moves your current session, `/worktree new` opens a fresh session in parallel — useful when you want to start a completely separate task without affecting your current context.
+
 After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
+
+**Controlling the worktree starting point** *(v1.0.79+)*: By default, `/worktree`, `/worktree new`, and `--worktree` all start from `HEAD`. The new `worktreeBaseRef` setting lets you change this to start from the remote default branch instead:
+
+```json
+{
+  "worktreeBaseRef": "origin/main"
+}
+```
 
 The `/every` command (also available as `/loop` since v1.0.64) schedules a recurring prompt to run automatically at a specified interval. The companion `/after` command runs a prompt once after a specified delay. Both are useful for self-paced automation — polling for results, periodically summarizing progress, or triggering other slash commands on a timer:
 
@@ -626,6 +656,8 @@ The `/diagnose` command (v1.0.64+) analyzes the current session's logs and surfa
 Use `/diagnose` when a session is behaving unexpectedly — it inspects session logs and reports what it finds, making it easier to share diagnostics with support or understand what happened internally.
 
 **Keyboard shortcuts for queuing messages**: Use **Ctrl+Q** or **Ctrl+Enter** to queue a message (send it while the agent is still working). **Ctrl+D** no longer queues messages — it now has its default terminal behavior. If you have muscle memory for Ctrl+D queuing, switch to Ctrl+Q.
+
+*(v1.0.79+)* **Prompt and command queuing in local sessions**: You can now queue prompts, shell commands (`!`-prefixed), and supported slash commands to run sequentially after the current task finishes. Type the next prompt or command while the agent is working and it will be held in a queue and executed automatically when the agent is ready. This is similar to the Ctrl+Q shortcut but extends to any input type.
 
 **Background running tasks**: Press **Ctrl+X → B** to move the current running task or shell command to the background. The task continues executing while you can type a new message or review earlier output. This is useful for long-running commands where you want to interact with the agent while waiting for the result.
 
@@ -743,6 +775,14 @@ copilot --plan          # start in plan mode (propose without executing)
 ```
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
+
+*(v1.0.79+)* Combine `--plan` with `--mode autopilot` to **plan first, then implement automatically** without waiting for approval between steps. The agent creates a plan, and once the plan is complete it transitions immediately into autopilot to implement it:
+
+```bash
+copilot --plan --mode autopilot "Add rate limiting to the /api/login endpoint"
+```
+
+This is the recommended pattern when you know the task is well-defined and want fully autonomous end-to-end execution — you get the benefit of an upfront plan (which you can review if you want) without needing to manually approve the transition from planning to implementation.
 
 The `--max-autopilot-continues` flag controls how many times Copilot can automatically continue in autopilot mode before pausing for confirmation. The default is 5:
 

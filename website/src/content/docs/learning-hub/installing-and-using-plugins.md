@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-14
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -33,7 +33,7 @@ A plugin bundles one or more of the following components:
 | **Hooks** | Event handlers that intercept agent behavior | `hooks.json` or `hooks/` |
 | **MCP Servers** | Model Context Protocol integrations for external tools | `.mcp.json` or `.github/mcp.json` |
 | **LSP Servers** | Language Server Protocol integrations | `lsp.json` or `.github/lsp.json` |
-| **Extensions** | IDE extensions installable via the plugin marketplace (v1.0.62+) | `extensions/` |
+| **Extensions** | IDE extensions and canvas extensions installable via the plugin marketplace (v1.0.62+) | `extensions/` |
 
 A plugin might include all of these or just one — for example, a plugin could provide a single specialized agent, or an entire development toolkit with multiple agents, skills, hooks, and MCP server configurations working together.
 
@@ -73,6 +73,27 @@ The `plugin.json` manifest declares what the plugin contains:
   ]
 }
 ```
+
+### Canvas Extensions in Plugins
+
+*(v1.0.79+)* Plugins can ship **canvas extensions** for the GitHub Copilot app using the Agent Plugins spec. Canvas extensions should be placed under a `com.github.copilot/extensions/` directory inside the plugin:
+
+```
+my-plugin/
+├── .github/
+│   └── plugin/
+│       └── plugin.json
+├── agents/
+├── skills/
+├── com.github.copilot/
+│   └── extensions/
+│       └── my-canvas/
+│           ├── extension.mjs
+│           └── assets/
+└── README.md
+```
+
+This allows plugin authors to bundle interactive canvas surfaces together with agents and skills, making it possible to ship a complete workflow tool as a single installable plugin.
 
 ## Why Use Plugins?
 
@@ -159,6 +180,26 @@ To automatically register an additional marketplace for everyone working in a re
 ```
 
 With this in place, team members automatically get the `my-org-plugins` marketplace available without running a separate `marketplace add` command. This replaces the older `marketplaces` setting, which was removed in v1.0.16.
+
+### Auto-Updating Marketplace Plugins
+
+*(v1.0.79+)* Add `"autoUpdate": true` to an `extraKnownMarketplaces` entry to automatically update all plugins from that marketplace at session start:
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "name": "my-org-plugins",
+      "source": "my-org/internal-plugins",
+      "autoUpdate": true
+    }
+  ]
+}
+```
+
+This is especially useful for teams that want everyone on the latest plugin versions automatically, without requiring manual `copilot plugin update` runs.
+
+> **Note**: First-party plugins (from the built-in `copilot-plugins` marketplace) automatically update to the latest version at each session start without any configuration needed.
 
 ### Pinning a Marketplace to a Specific Commit
 

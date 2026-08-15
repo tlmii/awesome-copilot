@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-15
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -445,9 +445,22 @@ These files follow the same format as `config.json` and are loaded after the glo
 
 The model picker opens in a **full-screen view** with inline reasoning effort adjustment. Use the **← / →** arrow keys to change the reasoning effort level (`low`, `medium`, `high`) directly from the picker without leaving the session. The current reasoning effort level is also displayed in the model header (e.g., `claude-sonnet-4.6 (high)`) so you always know which level is active.
 
+*(v1.0.79+)* The model picker now groups models into **Recent**, **Recommended**, **New**, and other sections for easier navigation. Press **Shift+Tab** to switch between grouping views.
+
 **Auto mode and server-side model routing** (v1.0.43+): When you select **Auto** as your model, the CLI uses server-side model routing for real-time model selection. Instead of locking in a single model at session start, Auto mode evaluates each request and routes it to the most appropriate model dynamically. This means straightforward questions can be handled by a faster model while complex reasoning tasks are automatically escalated — without you needing to switch models manually.
 
 **Model family aliases** (v1.0.64+): Instead of typing a full model name, you can use short family aliases in the model setting: `opus`, `sonnet`, `haiku` (Anthropic), and `gpt`, `gemini` (Google/OpenAI). The CLI resolves the alias to the latest available model in that family. This is especially useful in scripts or configuration files where you want to track the best model in a family without hardcoding a version string.
+
+**Notable recently-added models**: Claude Opus 5 (v1.0.75), grok-4.5 (v1.0.76), and kimi-k3 (v1.0.79).
+
+**Session-scoped model selection** (v1.0.79+): `/model` now sets the model for the **current session only** by default. To set a default model for all future sessions, use `/config model` instead. This change makes it easier to experiment with different models per task without accidentally changing your global preference.
+
+**Plan-mode model** (v1.0.74+): Use `/model plan` (or `/model --plan`) to pick a dedicated model for use while in plan mode. Pass a model ID to set it, `off` to clear it, or no argument to open the picker. The plan-mode model reverts to your session model when you leave plan mode:
+
+```
+/model plan claude-opus-5    # use Claude Opus 5 while planning
+/model plan off              # clear the plan-mode model override
+```
 
 ### CLI Session Commands
 
@@ -554,6 +567,14 @@ In v1.0.66+, you can pass a task description to `/worktree` to name the branch f
 ```
 
 This creates a branch named from your task description and begins working on it immediately, making it easy to spin up parallel work without stopping to think of a branch name.
+
+*(v1.0.79+)* Use `/worktree new` to start a **fresh session** in a new worktree without carrying forward the current session's context. This is useful when you want a completely clean slate on a new branch:
+
+```
+/worktree new my-new-feature      # start a new session in a new worktree
+```
+
+The `worktreeBaseRef` setting (v1.0.79+) controls whether `/worktree`, `/worktree new`, and the `--worktree` flag start from HEAD or the remote default branch. All three now default to **HEAD** — if you previously relied on `--worktree` starting from the remote default branch, set `worktreeBaseRef` to `"remote"` in your settings to restore that behavior.
 
 After the command runs, the session is inside the new worktree. Use this when you want to work on a second task in parallel without stashing changes or opening a new terminal. In v1.0.64+ you can also use the experimental `--worktree` flag at startup (`copilot -w [name]`) to create or reuse a worktree under `<repo>.worktrees/` before the session begins.
 
@@ -711,6 +732,12 @@ The `/autopilot` command (v1.0.45+) is a quick in-session toggle that switches b
 
 Use `/autopilot` when you want to flip between supervised and unsupervised operation mid-session without typing out the full `/allow-all on` or `/allow-all off` commands.
 
+The `/permissions` command (v1.0.78+) switches between approval modes — a convenience alternative to `/allow-all`. Use it to quickly inspect or change whether tool use requires manual approval:
+
+```
+/permissions      # open the permissions mode picker
+```
+
 > **Enhanced autopilot (v1.0.64+)**: When autopilot mode is active — including when launched with `--autopilot` at startup or during automatic continuation turns — the agent automatically handles elicitation dialogs, `ask_user` prompts, sampling requests, and permission prompts without surfacing them as interactive dialogs. This means long-running automated sessions can proceed end-to-end without manual confirmation steps.
 
 > **Auto allow-all mode (v1.0.69+)**: In addition to the standard allow-all mode (which approves everything), the CLI now supports an **auto allow-all** mode that uses an LLM judge to evaluate each tool request. When enabled, the judge automatically approves requests it evaluates as acceptable, and asks you for manual confirmation only for requests it considers risky. This gives you a middle ground between full autopilot and fully supervised operation — most routine actions proceed automatically while unusual or potentially dangerous actions still surface for your review. As of v1.0.69-3, this mode requires experimental features to be enabled — use `/experimental on` or start the CLI with `--experimental` — then activate it with `/allow-all auto`. The previous `AUTO_APPROVAL` environment variable approach has been removed in favour of experimental mode.
@@ -741,6 +768,14 @@ copilot --mode agent    # start in agent mode (autonomous tool use)
 copilot --autopilot     # alias for --mode autopilot (allow-all)
 copilot --plan          # start in plan mode (propose without executing)
 ```
+
+*(v1.0.79+)* Combine `--plan` with `--mode autopilot` to have the agent plan first and then implement automatically without waiting for your approval between the two phases:
+
+```bash
+copilot --plan --mode autopilot -p "Refactor the auth module"
+```
+
+This is useful in automated pipelines where you want the plan/implement cycle to run end-to-end without a manual approval step.
 
 This is useful in scripts or CI pipelines where you want the CLI to immediately begin working in a specific mode without an interactive prompt.
 

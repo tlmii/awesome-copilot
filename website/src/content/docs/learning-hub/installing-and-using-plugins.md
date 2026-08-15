@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-15
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -222,6 +222,35 @@ copilot plugin marketplace update
 copilot plugin uninstall my-plugin
 ```
 
+**Automatic updates** (v1.0.78+): First-party plugins (from the `copilot-plugins` marketplace) automatically update to their latest version at session start — you'll always be on the latest without running `plugin update` manually.
+
+**Per-marketplace auto-update** (v1.0.79+): Enable automatic updates for any marketplace by adding `"autoUpdate": true` to its entry in `extraKnownMarketplaces`:
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "name": "my-org-plugins",
+      "source": "my-org/internal-plugins",
+      "autoUpdate": true
+    }
+  ]
+}
+```
+
+**Enable/disable without uninstalling** (v1.0.76+): Use `/plugins` inside an interactive session to enable or disable individual plugins, MCP servers, agents, LSP servers, and hooks — without uninstalling them. This is useful for temporarily deactivating a plugin for a specific task:
+
+```
+/plugins                         # open the plugins management view
+```
+
+From the `/plugins` view you can also run `enable`, `disable`, `update`, and `remove` operations directly, or use the corresponding flags:
+
+```bash
+copilot /plugins enable my-plugin
+copilot /plugins disable my-plugin --plugin my-plugin
+```
+
 ### Loading Plugins from a Local Directory
 
 You can load plugins directly from a local directory without installing them from a marketplace, using the `--plugin-dir` flag when starting Copilot:
@@ -247,6 +276,10 @@ When you install a plugin, its components become available to Copilot CLI automa
 - **MCP servers** extend the tools available to agents
 
 You don't need to do any additional configuration after installing — the plugin's components integrate seamlessly into your workflow. Plugins take effect immediately after installation without requiring a Copilot CLI restart.
+
+**Open Plugin Spec v1 and `mcp.json`** (v1.0.74+): Plugins can now use **Open Plugin Spec v1** manifests and ship an `mcp.json` configuration file to declare MCP server dependencies. If your project already has an `mcp.json`, Copilot CLI reads it automatically — giving teams a single source of truth for MCP server configuration that works both with Copilot and other tools that support the spec.
+
+**Plugin extensions** (v1.0.79+): Plugin manifests following the Agent Plugins spec can ship canvas/IDE extensions under a `com.github.copilot/extensions/` directory. These extensions are automatically available in supported clients after plugin installation.
 
 ## Plugins from This Repository
 

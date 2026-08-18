@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-18
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -706,7 +706,14 @@ The `/allow-all` command (also accessible as `/yolo`) enables autopilot mode, wh
 The `/autopilot` command (v1.0.45+) is a quick in-session toggle that switches between **interactive mode** (where the agent pauses to ask for confirmation before tool use) and **autopilot mode** (where it runs autonomously). Unlike `/allow-all` which specifically controls whether tool permissions are required, `/autopilot` toggles the overall agent mode:
 
 ```
-/autopilot        # toggle between interactive and autopilot modes
+/autopilot                          # toggle between interactive and autopilot modes
+/autopilot <objective>              # set an explicit goal and switch to autopilot (v1.0.79+)
+```
+
+**Setting an explicit objective (v1.0.79+)**: You can now pass a goal directly to `/autopilot` — the agent switches into autopilot mode _and_ immediately starts working toward the objective you described, without needing to type a follow-up prompt. This replaces the previous experimental approach:
+
+```
+/autopilot Refactor the authentication module to use JWT tokens
 ```
 
 Use `/autopilot` when you want to flip between supervised and unsupervised operation mid-session without typing out the full `/allow-all on` or `/allow-all off` commands.

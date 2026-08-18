@@ -13,6 +13,7 @@ relatedArticles:
   - ./building-custom-agents.md
   - ./automating-with-hooks.md
   - ./creating-effective-skills.md
+  - ./multi-client-sessions-with-ahp.md
 prerequisites:
   - Understanding of GitHub Copilot agents
   - Repository with GitHub Copilot enabled

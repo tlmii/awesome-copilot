@@ -3,7 +3,7 @@ title: 'Building Custom Agents'
 description: 'Learn how to create specialized GitHub Copilot agents with custom personas, tool integrations, and domain expertise.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-09
+lastUpdated: 2026-08-18
 estimatedReadingTime: '10 minutes'
 tags:
   - agents
@@ -73,7 +73,7 @@ tools: ['codebase', 'terminal', 'github']
 
 **model** (recommended): The AI model that powers the agent. Choose based on the complexity of the task—use more capable models for nuanced reasoning.
 
-**reasoningEffort** *(v1.0.66+)*: Override the reasoning effort level for this agent. Accepted values are `low`, `medium`, and `high`. This lets you pin specific agents to a cost/quality tradeoff regardless of the user's global setting — for example, a quick code-formatting agent can use `low` effort, while a security reviewer uses `high`:
+**reasoningEffort**: Override the reasoning effort level for this agent. Accepted values are `low`, `medium`, and `high`. This lets you pin specific agents to a cost/quality tradeoff regardless of the user's global setting — for example, a quick code-formatting agent can use `low` effort, while a security reviewer uses `high`:
 
 ```yaml
 ---
@@ -254,11 +254,13 @@ The agent can then query your database, analyze query plans, and suggest optimiz
 
 | Scenario | Recommended Model |
 |----------|-------------------|
-| Most demanding reasoning, security review | Claude Sonnet 5 *(v1.0.67+)* |
+| Most demanding reasoning, security review | Claude Sonnet 5 |
 | Complex reasoning, analysis | Claude Sonnet 4 |
-| Code generation, tool-driven agentic work | GPT-5.6 *(v1.0.70+)* |
+| Code generation, tool-driven agentic work | GPT-5.6 |
 | Code generation, refactoring | GPT-4.1 |
-| Code-specialized tasks, large context | kimi-k2.7-code *(v1.0.68+)* |
+| Code-specialized tasks, large context | kimi-k2.7-code |
+| Fast code tasks, cost-efficient | Gemini 3.7 Flash *(v1.0.80+)* |
+| Fast code tasks, alternative | MAI Code 1.1 Flash *(v1.0.79+)* |
 | Quick analysis, simple tasks | Claude Haiku or GPT-4.1-mini |
 | Large codebase understanding | Models with larger context windows |
 

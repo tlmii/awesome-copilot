@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-19
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -73,6 +73,27 @@ The `plugin.json` manifest declares what the plugin contains:
   ]
 }
 ```
+
+### VS Code: Agent Plugins 1.0 (stable since VS Code 1.133)
+
+Starting with VS Code 1.133 (August 2026), Agent Plugins reached **1.0 stable** in VS Code. The VS Code plugin format uses a `com.github.copilot/` directory inside the plugin to organize agents, commands (prompts), rules (instructions), and hooks:
+
+```
+my-plugin/
+├── plugin.json
+├── mcp.json                       # MCP server configuration (VS Code)
+└── com.github.copilot/
+    ├── agents/
+    │   └── my-agent.agent.md
+    ├── commands/
+    │   └── my-command.prompt.md
+    ├── rules/
+    │   └── my-rules.instructions.md
+    └── hooks/
+        └── hooks.json
+```
+
+This `com.github.copilot/` namespace structure is the canonical layout for VS Code Agent Plugins 1.0. Plugins authored for the Copilot CLI (using top-level `agents/`, `skills/`, and `hooks.json`) remain compatible with the CLI and are also discoverable from VS Code via the `awesome-copilot` marketplace.
 
 ## Why Use Plugins?
 
@@ -287,7 +308,7 @@ See [Using the Copilot Coding Agent](../using-copilot-coding-agent/) for details
 
 **Q: Do plugins work with the coding agent on GitHub.com?**
 
-A: Plugins are specific to GitHub Copilot CLI and the VS Code extension (currently Insiders). For the coding agent on GitHub.com, add agents, skills, and hooks directly to your repository (via a plugin if you prefer!). See [Using the Copilot Coding Agent](../using-copilot-coding-agent/) for details.
+A: Plugins are supported in GitHub Copilot CLI and in VS Code (Agent Plugins reached 1.0 stable in VS Code 1.133, August 2026). For the coding agent on GitHub.com, add agents, skills, and hooks directly to your repository (via a plugin if you prefer!). See [Using the Copilot Coding Agent](../using-copilot-coding-agent/) for details.
 
 **Q: Can I use plugins and repository-level configuration together?**
 

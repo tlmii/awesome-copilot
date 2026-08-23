@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-23
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -73,6 +73,42 @@ The `plugin.json` manifest declares what the plugin contains:
   ]
 }
 ```
+
+## The Agent Plugins 1.0 Open Standard
+
+On August 6, 2026, the [Agent Plugins 1.0](https://agent-plugins.org/) open standard launched with support from VS Code, GitHub Copilot CLI, the GitHub Copilot app, and other agent clients. The standard defines a portable plugin format that works across multiple AI coding tools — so a plugin you build once can be installed in any compliant client.
+
+### Portable Layout
+
+An Agent Plugins 1.0-compliant package uses a root-level `plugin.json` manifest alongside standard directories:
+
+```
+my-plugin/
+  plugin.json          # Root-level manifest (open standard)
+  skills/              # Portable skills (loaded by any compliant client)
+  mcp.json             # Portable MCP server config (loaded by any compliant client)
+  com.github.copilot/  # Copilot-specific components (read by VS Code, CLI, and Copilot app)
+    agents/
+    commands/
+    rules/
+    hooks/
+      hooks.json
+```
+
+Clients that don't implement the `com.github.copilot` namespace simply ignore it — so one package stays portable and still brings your custom agents, slash commands, rules, and hooks to every Copilot surface.
+
+### What This Means for Copilot Users
+
+- **One package, multiple clients**: Publish a plugin once and it works in VS Code (via `@agentPlugins`), GitHub Copilot CLI (via `copilot plugin install`), and the GitHub Copilot app.
+- **Portable skills and MCP servers**: Skills in `skills/` and server configs in `mcp.json` follow the standard and are loaded by all compliant clients.
+- **Copilot-specific extras**: Agents, slash commands, rules, and hooks go in the `com.github.copilot/` namespace and are picked up by all three Copilot surfaces.
+- **Community ecosystem**: The open standard means you can discover and use plugins from a growing cross-tool marketplace, not just plugins built specifically for one client.
+
+> **VS Code**: Browse plugins via `@agentPlugins` in the Extensions search view or run **Chat: Plugins** from the Command Palette. The `awesome-copilot` marketplace is registered by default.
+
+Learn more at [agent-plugins.org](https://agent-plugins.org/) and the [VS Code agent plugins docs](https://code.visualstudio.com/docs/agent-customization/agent-plugins).
+
+---
 
 ## Why Use Plugins?
 

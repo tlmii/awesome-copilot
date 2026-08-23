@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-23
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -165,9 +165,10 @@ A well-organized Copilot configuration directory looks like this:
 │   │   └── SKILL.md
 │   └── refactor-component/
 │       └── SKILL.md
-└── instructions/
-    ├── typescript-conventions.instructions.md
-    └── api-design.instructions.md
+├── instructions/
+│   ├── typescript-conventions.instructions.md
+│   └── api-design.instructions.md
+└── dictation.md           # Optional: dictation transcription instructions (VS Code)
 ```
 
 ### Monorepo Support
@@ -304,7 +305,21 @@ When writing TypeScript code:
 
 **When to use**: For project-wide coding standards, architectural patterns, or technology-specific conventions that should influence all suggestions.
 
-## Setting Up Team Configuration
+### Dictation Instructions
+
+*(VS Code 1.132+)* Control how VS Code transcribes speech-to-text for chat inputs by placing a `dictation.md` file in `.github/`. This lets you adapt the transcript to project terminology, abbreviations, or formatting preferences — for example, ensuring that acronyms like "API" or product names are capitalized consistently.
+
+**Example** (`.github/dictation.md`):
+```markdown
+When transcribing speech, always:
+- Capitalize product names: "Copilot", "GitHub", "VS Code"
+- Expand abbreviations: "PR" → "pull request", "CI" → "continuous integration"
+- Use numerals for version numbers (e.g., "version 3" not "version three")
+```
+
+VS Code combines instructions from `~/.copilot/dictation.md` (user-level) and `.github/dictation.md` (repository-level) in trusted workspaces. Repository dictation instructions are shared with the team and version-controlled alongside your other Copilot customizations.
+
+**When to use**: For teams with domain-specific terminology, product names, or transcription quirks that affect dictation accuracy in VS Code.
 
 Follow these steps to establish effective team-wide Copilot configuration:
 

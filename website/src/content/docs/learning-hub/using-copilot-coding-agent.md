@@ -3,7 +3,7 @@ title: 'Using the Copilot Coding Agent'
 description: 'Learn how to use GitHub Copilot coding agent to autonomously work on issues, generate pull requests, and automate development tasks.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-05-13
+lastUpdated: 2026-08-24
 estimatedReadingTime: '12 minutes'
 tags:
   - coding-agent
@@ -376,6 +376,38 @@ Since v1.0.47, `--resume` also surfaces **cloud agent sessions that haven't yet 
 | No PR required | You can steer tasks that haven't yet opened a pull request |
 
 > **Note**: Remote control replaces the earlier "steering" feature. If you see references to steering in older documentation, remote control is the updated equivalent.
+
+## Plan-then-Implement Workflow
+
+*(v1.0.79+)* You can combine `--plan` with `--mode autopilot` to have the agent first produce a plan and then implement it automatically — without pausing for your approval between steps:
+
+```bash
+copilot --plan --mode autopilot -p "Add pagination to the users API endpoint"
+```
+
+This is useful for well-understood tasks where you trust the agent to proceed after planning. The agent:
+
+1. Reads the codebase and your instructions
+2. Produces a written plan (visible in the session timeline)
+3. Immediately begins implementing without waiting for approval
+
+For tasks that need human sign-off before implementation, omit `--mode autopilot` and approve the plan interactively.
+
+## Working in a New Worktree
+
+*(v1.0.79+)* Use `/worktree new` to start a fresh session in a new, isolated git worktree from within an existing session:
+
+```
+/worktree new
+```
+
+This is useful when you want to start a parallel task without interrupting the current session. The new worktree gets its own branch and isolated environment, and both sessions appear in the Sessions sidebar (if you have the Copilot app open) or the `/remote` tab.
+
+You can also pass a kickoff prompt directly:
+
+```
+/worktree new Fix the flaky test in the payments module
+```
 
 ## Hooks and the Coding Agent
 

@@ -3,13 +3,12 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-24
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
   - copilot-cli
   - fundamentals
-relatedArticles:
   - ./building-custom-agents.md
   - ./creating-effective-skills.md
   - ./automating-with-hooks.md
@@ -160,6 +159,24 @@ To automatically register an additional marketplace for everyone working in a re
 
 With this in place, team members automatically get the `my-org-plugins` marketplace available without running a separate `marketplace add` command. This replaces the older `marketplaces` setting, which was removed in v1.0.16.
 
+### Auto-Updating Marketplaces
+
+*(v1.0.79+)* To automatically update a marketplace's plugins at session start, add `autoUpdate: true` to an `extraKnownMarketplaces` entry:
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "name": "my-org-plugins",
+      "source": "my-org/internal-plugins",
+      "autoUpdate": true
+    }
+  ]
+}
+```
+
+With `autoUpdate` enabled, each session starts with the latest available plugin versions from that marketplace — no manual `copilot plugin update` needed.
+
 ### Pinning a Marketplace to a Specific Commit
 
 *(v1.0.70+)* To ensure reproducibility and prevent unintended updates, you can pin a marketplace to an exact commit SHA using the `sha` field in the source configuration:
@@ -204,9 +221,24 @@ Or from an interactive session:
 
 Browse to the plugin via `@agentPlugins` in the Extensions search view or via **Chat: Plugins** in the Command Palette, then click **Install**.
 
+## Enabling and Disabling Plugin Components
+
+*(v1.0.76+)* You can enable or disable individual components from the `/plugins` command inside a Copilot session, without uninstalling the whole plugin:
+
+```
+/plugins enable --plugin my-plugin
+/plugins disable --plugin my-plugin
+/plugins disable --skill database-migrations
+/plugins disable --mcp my-mcp-server
+```
+
+The `enable`/`disable` verbs also accept `--agent`, `--hook`, and `--lsp` flags, giving you fine-grained control over which parts of a plugin are active in a session.
+
 ## Managing Plugins
 
 Once installed, plugins are managed with a few simple commands:
+
+Also add `update`/`uninstall` verbs directly in `/plugins` for session-level management:
 
 ```bash
 # List all installed plugins

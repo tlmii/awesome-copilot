@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-27
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -160,6 +160,24 @@ To automatically register an additional marketplace for everyone working in a re
 
 With this in place, team members automatically get the `my-org-plugins` marketplace available without running a separate `marketplace add` command. This replaces the older `marketplaces` setting, which was removed in v1.0.16.
 
+### Auto-Updating a Marketplace
+
+*(v1.0.79+)* Set `"autoUpdate": true` on an `extraKnownMarketplaces` entry to automatically update its plugins at session start:
+
+```json
+{
+  "extraKnownMarketplaces": [
+    {
+      "name": "my-org-plugins",
+      "source": "my-org/internal-plugins",
+      "autoUpdate": true
+    }
+  ]
+}
+```
+
+With auto-update enabled, every new session fetches the latest plugin versions from that marketplace automatically — useful for internal tooling teams that release frequently and want everyone on the newest version without manual `plugin update` runs.
+
 ### Pinning a Marketplace to a Specific Commit
 
 *(v1.0.70+)* To ensure reproducibility and prevent unintended updates, you can pin a marketplace to an exact commit SHA using the `sha` field in the source configuration:
@@ -232,6 +250,8 @@ copilot --plugin-dir /path/to/my-plugin
 
 Plugins loaded this way appear in `/plugin list` under a separate **External Plugins** section, clearly distinguished from marketplace-installed plugins. This is useful for testing local plugins in development or loading private plugins that aren't published to any marketplace.
 
+*(v1.0.81-8+)* Path-sourced plugins in a **local marketplace** (added with `marketplace add /path/to/dir`) load their content **live** from the real directory on disk. Changes you make to the plugin take effect on `/restart` or in a new session — no `plugin update` command needed. This makes local development iteration much faster.
+
 ### Where Plugins Are Stored
 
 - **Marketplace plugins**: `~/.copilot/installed-plugins/MARKETPLACE/PLUGIN-NAME/`
@@ -247,6 +267,16 @@ When you install a plugin, its components become available to Copilot CLI automa
 - **MCP servers** extend the tools available to agents
 
 You don't need to do any additional configuration after installing — the plugin's components integrate seamlessly into your workflow. Plugins take effect immediately after installation without requiring a Copilot CLI restart.
+
+### First-Party Plugin Auto-Updates
+
+*(v1.0.78+)* Official first-party plugins (those published directly by GitHub) are **automatically updated to their latest version at session start**. This means you always get the newest capabilities and fixes for official plugins without running any manual update command.
+
+For community and third-party plugins, use `copilot plugin update <plugin-name>` or set `autoUpdate: true` in your marketplace config to keep them current.
+
+### Loading Plugins from Additional Directories
+
+*(v1.0.81-8+)* When you start Copilot with `--add-dir`, agents and skills in the added directories are automatically discovered and available — just as if they were installed from a marketplace. This makes it easy to share a local plugin directory across multiple projects:
 
 ## Plugins from This Repository
 

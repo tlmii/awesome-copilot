@@ -3,7 +3,7 @@ title: 'Using the Copilot Coding Agent'
 description: 'Learn how to use GitHub Copilot coding agent to autonomously work on issues, generate pull requests, and automate development tasks.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-05-13
+lastUpdated: 2026-08-27
 estimatedReadingTime: '12 minutes'
 tags:
   - coding-agent
@@ -355,6 +355,16 @@ Or open a remote control tab from inside an existing session, and check or toggl
 ```
 
 The **Remote** tab in the CLI shows all active coding agent tasks from the repository. Select a task to connect and begin sending steering messages.
+
+### Working in Isolated Worktrees
+
+*(v1.0.78+)* Use `/worktree new` to start a new session in a **fresh git worktree**. This is useful when you want to work on an independent task without affecting the current branch:
+
+```
+/worktree new       # create a new worktree and start a conversation in it
+```
+
+Each `/worktree new` session gets its own branch and isolated environment, enabling true parallel workstreams without branch conflicts. The `worktreeBaseRef` setting (added in v1.0.79) controls whether new worktrees start from `HEAD` (the default) or the remote default branch.
 
 ### Resuming from the Session Picker
 

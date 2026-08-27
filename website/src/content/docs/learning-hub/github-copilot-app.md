@@ -3,7 +3,7 @@ title: 'Getting Started with the GitHub Copilot app'
 description: 'Learn about the GitHub Copilot app, a desktop experience built for agent-native development. Understand its key features and who it''s for.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-06-17
+lastUpdated: 2026-08-27
 estimatedReadingTime: '8 minutes'
 tags:
   - copilot-app
@@ -146,6 +146,12 @@ Once installed, you can create a session by:
 
 Each session runs in its own worktree with its own isolated environment. You can run multiple sessions in parallel.
 
+### Restoring Sessions After Restart
+
+*(v1.0.81-7+)* When the GitHub Copilot CLI starts, it **offers to restore sessions that were still open** when it last exited — whether due to a crash, a machine restart, or simply closing the terminal. This means you can pick up where you left off without manually reopening each session.
+
+This session restore prompt also surfaces in the Copilot app, so an unexpected shutdown no longer means losing track of in-progress agent work.
+
 ### Launching Sessions from the Terminal with Deep Links
 
 The GitHub Copilot app supports URL deep links. This is useful when you want to open the app or start a session directly from your terminal workflow.
@@ -198,6 +204,22 @@ open "ghapp://session/new?repo=owner/repo&mode=plan"
 - `ghapp://workflows` - Open automations
 - `ghapp://owner/repo/issues/123` - Open an issue
 - `ghapp://owner/repo/pull/456` - Open a pull request
+
+### Opening the App from Copilot CLI
+
+*(v1.0.79+)* You can open the GitHub Copilot app in the current directory directly from the CLI using the `copilot app` command:
+
+```bash
+copilot app
+```
+
+If you're already inside an interactive Copilot CLI session, use the `/app` command to open the current session in the desktop app:
+
+```
+/app
+```
+
+This bridges the CLI and desktop app workflows — start a task in the terminal, then continue it with the richer visual interface of the Copilot app. Requires GitHub Copilot app 1.1.3 or later.
 
 #### Important limitations
 

@@ -3,7 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-28
 estimatedReadingTime: '8 minutes'
 tags:
   - hooks
@@ -175,6 +175,38 @@ You can also use these as **template variables** directly in the `bash` or `powe
 ```
 
 This makes it straightforward to write plugin hooks that are portable across machines and projects without hardcoding paths.
+
+### OpenTelemetry Trace Context in Hooks (v1.0.81+)
+
+Hooks can now receive the current OpenTelemetry trace context, enabling you to emit correlated spans from your hook scripts. This is useful for integrating Copilot agent sessions with distributed tracing systems such as Jaeger, Zipkin, or cloud-native observability platforms.
+
+**What hooks receive:**
+
+- All hook inputs now include a `traceparent` field containing the W3C Trace Context header value for the current operation
+- When the span carries vendor state, a `tracestate` field is also included
+- Command hooks additionally receive the trace context as environment variables:
+  - `TRACEPARENT` — W3C traceparent header value
+  - `TRACESTATE` — W3C tracestate header value (when present)
+
+**Example: Emitting a correlated span from a hook script:**
+
+```bash
+#!/usr/bin/env bash
+# Use TRACEPARENT to emit a correlated child span
+INPUT=$(cat)
+TRACEPARENT="${TRACEPARENT:-}"
+
+if [ -n "$TRACEPARENT" ]; then
+  # Pass trace context to your observability tooling
+  # e.g., otelcli span create --traceparent "$TRACEPARENT" --name "hook.postToolUse" ...
+  echo "Emitting span with parent: $TRACEPARENT" >&2
+fi
+
+# Regular hook logic continues here
+exit 0
+```
+
+This feature is opt-in — hooks without trace-aware logic continue to work unchanged.
 
 ### Event Configuration
 

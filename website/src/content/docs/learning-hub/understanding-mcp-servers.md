@@ -3,7 +3,7 @@ title: 'Understanding MCP Servers'
 description: 'Learn how Model Context Protocol servers extend GitHub Copilot with access to external tools, databases, and APIs.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-29
 estimatedReadingTime: '8 minutes'
 tags:
   - mcp
@@ -100,6 +100,8 @@ GitHub Copilot CLI provides a registry-based install flow that lets you browse a
 /mcp registry
 ```
 
+In v1.0.81+, running bare `/mcp` (with no subcommand) opens the **plugins dashboard** with a dedicated MCP tab, where you can browse, install, and manage servers without leaving the session. The `/mcp registry` sub-command is still available for direct registry access.
+
 A picker will list available servers from the registry. After selecting one, the CLI prompts for any required configuration values (connection strings, API keys, etc.) and writes the completed entry to your persistent MCP config automatically.
 
 You can also install a specific server by name directly:
@@ -109,6 +111,8 @@ You can also install a specific server by name directly:
 ```
 
 This guided flow is the recommended way to add new MCP servers, especially for servers that require multiple configuration values.
+
+> **Protocol update (v1.0.81)**: GitHub Copilot CLI now ships support for the MCP 2026-07-28 specification, which includes improvements to session management and protocol stability. Existing server configurations remain compatible.
 
 ### Configuration Fields
 

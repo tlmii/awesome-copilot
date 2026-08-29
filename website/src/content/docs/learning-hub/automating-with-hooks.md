@@ -3,10 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
-estimatedReadingTime: '8 minutes'
-tags:
-  - hooks
+lastUpdated: 2026-08-29
   - automation
   - fundamentals
 relatedArticles:
@@ -139,6 +136,38 @@ EOF
 ```
 
 > **How it works**: If your hook writes `{"additionalContext": "..."}` to stdout and exits with code `0`, the text is prepended to the model prompt for this turn. The hook can also write both `additionalContext` and `response` — if `response` is present, that wins and the model call is skipped.
+
+### OpenTelemetry Trace Context (v1.0.81+)
+
+Hooks can now participate in distributed tracing. Each hook invocation receives the current **OpenTelemetry trace context** so your hook scripts can emit correlated spans alongside the agent's own telemetry.
+
+**For all hook types**, the JSON input gains two optional fields:
+
+| Field | Description |
+|-------|-------------|
+| `traceparent` | W3C Trace Context `traceparent` header value for the current span |
+| `tracestate` | W3C `tracestate` header (included only when the span carries vendor trace state) |
+
+**For `command` hooks**, the same values are also injected as environment variables (`TRACEPARENT` and `TRACESTATE`), so you can forward them to child processes or tracing SDKs without parsing stdin.
+
+This enables hooks to create correlated child spans in your observability platform (Datadog, Honeycomb, Jaeger, etc.), linking agent actions to your existing traces:
+
+```bash
+#!/usr/bin/env bash
+# Example: Forward trace context to an external telemetry endpoint
+INPUT=$(cat)
+TRACE_PARENT=$(echo "$INPUT" | jq -r '.traceparent // empty')
+
+if [ -n "$TRACE_PARENT" ]; then
+  curl -s -X POST https://telemetry.example.com/spans \
+    -H "traceparent: $TRACE_PARENT" \
+    -H "Content-Type: application/json" \
+    -d "$INPUT" &
+fi
+exit 0
+```
+
+> **Subagent hooks**: Hook lifecycle events (`hook.start`/`hook.end`) fired inside a subagent are now recorded on that subagent's session and re-emitted on its parent, rather than being silently dropped. This means distributed traces now include hook spans from subagents, giving you complete end-to-end visibility.
 
 ### Extension Hooks Merging
 

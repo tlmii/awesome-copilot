@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-30
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -114,11 +114,15 @@ Browse plugins in a specific marketplace:
 copilot plugin marketplace browse awesome-copilot
 ```
 
-Or from within an interactive Copilot session:
+Or open the **plugins dashboard** from within an interactive Copilot session by running any of the following commands:
 
 ```
-/plugin marketplace browse awesome-copilot
+/plugin
+/mcp
+/skills
 ```
+
+The unified dashboard shows your installed plugins, MCP servers, skills, agents (`/subagents`), and instructions (`/instructions`) all in one place. The `/plugin` command also flags installed plugins that have a newer version available upstream and offers an **Update** action to pull it.
 
 > **Tip**: You can also browse plugins on this site's [Plugins Directory](../../plugins/) to see descriptions, included agents, and skills before installing.
 
@@ -221,6 +225,10 @@ copilot plugin marketplace update
 # Remove a plugin
 copilot plugin uninstall my-plugin
 ```
+
+> **Auto-updates**: First-party plugins (from the `copilot-plugins` marketplace) automatically update to the latest version at session start. For other plugins, run `copilot plugin update` manually or use the **Update** action in the `/plugin` dashboard when a newer version is flagged.
+
+> **Local plugin directories**: Plugins sourced from a local directory marketplace load live from their real directory, so editing a local plugin takes effect on `/restart` or in a new session — no `copilot plugin update` needed.
 
 ### Loading Plugins from a Local Directory
 

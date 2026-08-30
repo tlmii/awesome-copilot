@@ -3,7 +3,7 @@ title: 'Copilot Configuration Basics'
 description: 'Learn how to configure GitHub Copilot at user, workspace, and repository levels to optimize your AI-assisted development experience.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-30
 estimatedReadingTime: '10 minutes'
 tags:
   - configuration
@@ -232,6 +232,35 @@ In addition to model and effort settings, this file can also extend the URL, MCP
 **Why use this**: Pin a model when your team has agreed on the right cost/quality tradeoff for a project. Pin a high effort level for codebases where mistakes are expensive. Deny lists let you block specific MCP servers or URLs that aren't appropriate for a given project's security posture.
 
 > **Trust requirement**: The repository must be explicitly trusted by the user for these settings to take effect. This prevents untrusted repositories from changing your model or access restrictions without your knowledge.
+
+### Default Mode and Permission Mode (v1.0.81+)
+
+You can set your preferred startup mode and permission approval behavior as user-level defaults in `settings.json`:
+
+```json
+{
+  "defaultMode": "plan",
+  "defaultPermissionMode": "auto"
+}
+```
+
+**`defaultMode`** — The mode that new interactive sessions start in:
+
+| Value | Description |
+|-------|-------------|
+| `"interactive"` | Standard interactive mode (default if not set) |
+| `"plan"` | Sessions start in plan mode — Copilot drafts a plan before executing |
+| `"autopilot"` | Sessions start in autopilot mode — Copilot works autonomously |
+
+**`defaultPermissionMode`** — How Copilot handles tool permission requests in new sessions:
+
+| Value | Description |
+|-------|-------------|
+| `"ask"` | Prompt for approval on each permission request (default) |
+| `"auto"` | Automatically approve low-risk permissions |
+| `"allow-all"` | Approve all permissions without prompting |
+
+These defaults apply to new sessions; you can still change mode or permissions within any individual session using `/mode` or `/permissions`.
 
 ### Custom Agents
 

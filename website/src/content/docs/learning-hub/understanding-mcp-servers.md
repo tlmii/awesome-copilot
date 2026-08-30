@@ -3,7 +3,7 @@ title: 'Understanding MCP Servers'
 description: 'Learn how Model Context Protocol servers extend GitHub Copilot with access to external tools, databases, and APIs.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-30
 estimatedReadingTime: '8 minutes'
 tags:
   - mcp
@@ -334,6 +334,14 @@ You can also open the `/mcp` manager while the agent is working to toggle server
 - **Version control carefully**: Commit `.mcp.json` or `.vscode/mcp.json` for shared server configurations, but use `.gitignore` for any files containing credentials.
 - **Test server connectivity**: Verify MCP servers start correctly before relying on them in agent workflows. Use `/mcp show` to check status and read stderr output in any failure warnings.
 - **Use the MCP allowlist (experimental)**: In high-security environments, the `MCP_ALLOWLIST` feature flag lets you validate MCP servers against a configured registry, blocking unrecognized servers from loading. MCP servers that are blocked by the allowlist policy are **hidden from `/mcp show`** to avoid confusion — only permitted servers appear in that view. This is an experimental feature for enterprise environments requiring strict control over which MCP servers are permitted.
+
+### MCP Protocol Version Support
+
+GitHub Copilot CLI, SDK, IDE, and in-memory clients now support the **MCP 2026-07-28 specification**. This is the latest published revision of the protocol and enables compatibility with servers targeting that spec version.
+
+### Windows: Microsoft Entra ID Authentication for Remote MCP Servers (v1.0.81+)
+
+On Windows, remote MCP servers protected by Microsoft Entra ID can now authenticate through the OS authentication broker (WAM). In most cases this requires no user interaction — the sign-in happens silently using your existing Windows credentials. Other platforms, the `--device-code` flag, and machines without the WAM broker library continue to use the existing browser-based flow.
 
 ### Organization Policy for Third-Party MCP Servers
 

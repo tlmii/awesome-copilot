@@ -3,7 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-08-30
 estimatedReadingTime: '8 minutes'
 tags:
   - hooks
@@ -649,6 +649,26 @@ echo "Pre-commit checks passed ✅"
 - **Document setup requirements**: If hooks depend on tools being installed (Prettier, ESLint), document this in the README.
 - **Test locally first**: Run hook scripts manually before relying on them in agent sessions.
 - **Layer hooks, don't overload**: Use multiple hook entries for independent checks rather than one monolithic script.
+
+## OpenTelemetry Trace Context (v1.0.81+)
+
+Hooks can now participate in distributed tracing. Each hook invocation receives the current OpenTelemetry trace context so your hook scripts can emit correlated spans:
+
+- **All hooks** receive a `traceparent` field in their JSON input (and `tracestate` when the span has vendor-specific state).
+- **Command hooks** additionally receive `TRACEPARENT` (and `TRACESTATE`) as environment variables, so scripts can pass them to child processes or HTTP calls without parsing stdin.
+
+This is useful for correlating hook activity with agent sessions in observability platforms (Datadog, Honeycomb, Jaeger, etc.).
+
+Example: forwarding the trace context from a `postToolUse` hook:
+
+```bash
+#!/usr/bin/env bash
+# $TRACEPARENT is automatically set by the CLI for command hooks
+curl -s -X POST https://telemetry.example.com/hook-event \
+  -H "Content-Type: application/json" \
+  -H "traceparent: $TRACEPARENT" \
+  -d "{\"event\": \"postToolUse\", \"session\": \"$SESSION_ID\"}"
+```
 
 ## Common Questions
 

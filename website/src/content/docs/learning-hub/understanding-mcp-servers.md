@@ -3,7 +3,7 @@ title: 'Understanding MCP Servers'
 description: 'Learn how Model Context Protocol servers extend GitHub Copilot with access to external tools, databases, and APIs.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-09-01
 estimatedReadingTime: '8 minutes'
 tags:
   - mcp
@@ -23,6 +23,8 @@ This article explains what MCP is, how to configure servers, and how agents use 
 ## What Is MCP?
 
 The **Model Context Protocol (MCP)** is an open standard for connecting AI assistants to external data sources and tools. An MCP server is a lightweight process that exposes capabilities—called **tools**—that Copilot can invoke during a conversation.
+
+> **Protocol update**: GitHub Copilot CLI v1.0.81 ships support for the **MCP 2026-07-28 specification** across CLI, SDK, IDE, and in-memory clients. If you maintain a custom MCP server, check the [MCP specification changelog](https://spec.modelcontextprotocol.io/) for changes introduced in that revision.
 
 Think of MCP servers as bridges:
 

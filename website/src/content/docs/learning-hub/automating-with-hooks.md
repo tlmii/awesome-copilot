@@ -3,7 +3,7 @@ title: 'Automating with Hooks'
 description: 'Learn how to use hooks to automate lifecycle events like formatting, linting, and governance checks during Copilot agent sessions.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-09-01
 estimatedReadingTime: '8 minutes'
 tags:
   - hooks
@@ -579,6 +579,31 @@ The `subagentStart` hook fires when the main agent spawns a subagent (e.g., via 
 ```
 
 This is especially useful in multi-agent workflows where subagents may not automatically inherit context from the parent session.
+
+### OpenTelemetry Trace Context (v1.0.81+)
+
+Since v1.0.81, hook inputs include the current **OpenTelemetry trace context**, enabling your hook scripts to emit spans that are correlated with the Copilot session trace. This is useful for observability pipelines that want to link hook activity (linting, auditing, notifications) back to the originating agent session.
+
+**What's included in hook inputs**:
+
+- `traceparent` — the W3C Trace Context header value identifying the current trace and span
+- `tracestate` — vendor-specific trace state (when present on the span)
+
+For **command hooks**, these values are also available as environment variables (`TRACEPARENT`, `TRACESTATE`), so you can pass them directly to sub-processes that support standard OTEL propagation:
+
+```bash
+#!/usr/bin/env bash
+# Forward trace context to an internal observability endpoint
+INPUT=$(cat)
+TRACEPARENT="${TRACEPARENT:-}"
+
+curl -s -X POST "https://telemetry.example.com/hook-events" \
+  -H "Content-Type: application/json" \
+  -H "traceparent: $TRACEPARENT" \
+  -d "$INPUT"
+```
+
+Hook lifecycle events (`hook.start` / `hook.end`) emitted inside a subagent are recorded on that subagent's session and re-emitted on its parent, so your traces capture the full chain of subagent activity automatically.
 
 ### Plugin Hook Environment Variables
 

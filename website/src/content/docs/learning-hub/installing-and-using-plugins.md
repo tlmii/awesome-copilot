@@ -3,7 +3,7 @@ title: 'Installing and Using Plugins'
 description: 'Learn how to find, install, and manage plugins that extend GitHub Copilot CLI with reusable agents, skills, hooks, and integrations.'
 authors:
   - GitHub Copilot Learning Hub Team
-lastUpdated: 2026-07-13
+lastUpdated: 2026-09-01
 estimatedReadingTime: '8 minutes'
 tags:
   - plugins
@@ -92,6 +92,30 @@ Plugins are especially valuable when you want to:
 - **Share domain expertise** — Package a Rails expert, Kubernetes specialist, or security reviewer as an installable unit
 - **Encapsulate complex setups** — Bundle MCP server configurations that would otherwise require manual setup
 - **Reuse across projects** — Install the same capabilities in every project without duplicating files
+
+## The Plugins Dashboard (v1.0.81+)
+
+Since v1.0.81, all plugin-related management is consolidated into a **unified dashboard**. The old `/plugins` command has been replaced by three focused entry points — each opening the same dashboard at the relevant tab:
+
+| Command | Opens |
+|---------|-------|
+| `/plugin` | Plugin management — install, update, remove plugins |
+| `/mcp` | MCP server configuration — connect and manage MCP servers |
+| `/skills` | Skills browser — discover and invoke available skills |
+
+Additional dashboards:
+- `/subagents` — view active and available subagents
+- `/instructions` — view loaded instruction files
+
+> **Removed in v1.0.81**: The legacy `/plugins` command no longer exists. If you have documentation or scripts that reference `/plugins`, update them to use `/plugin` instead.
+
+### Plugin Update Notifications
+
+The `/plugin` dashboard now **flags installed plugins that have a newer version upstream** — a badge appears next to out-of-date plugins with an **Update** action. Click it (or run `/plugin update <name>`) to pull the latest version without leaving the session.
+
+```
+/plugin update database-data-management@awesome-copilot
+```
 
 ## Finding Plugins
 

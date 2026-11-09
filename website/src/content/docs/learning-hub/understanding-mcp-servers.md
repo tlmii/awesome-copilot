@@ -118,7 +118,7 @@ This guided flow is the recommended way to add new MCP servers, especially for s
 
 **args**: Arguments passed to the command. Most MCP servers are distributed as npm packages and can be run with `npx -y`.
 
-**env**: Environment variables passed to the server process. Use these for connection strings, API keys, and configuration—never hardcode secrets in the JSON file.
+**env**: Environment variables passed to the server process. Use these for connection strings, API keys, and configuration—never hardcode secrets in the JSON file. In interactive sessions, values are passed literally; use `${NAME}` to reference a host environment variable. If a directory has both `.github/mcp.json` and `.mcp.json`, the `.github/mcp.json` file is ignored rather than merged.
 
 **type** (remote servers): The transport type for remote MCP servers (`http` or `sse`). This field can now be omitted — the CLI defaults to `http` when no type is specified, simplifying remote server configuration.
 

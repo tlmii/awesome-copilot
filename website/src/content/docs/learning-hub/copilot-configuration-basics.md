@@ -937,13 +937,21 @@ Run `/config` to open a dedicated sidebar configuration screen inside the CLI, g
 
 ### Sandbox Session Control
 
-The **Sandbox extensions** setting runs extension processes inside the sandbox as well. `/sandbox` can keep sandboxing enabled for the current session only, without changing your global setting. Sandboxed commands can use `HTTPS_PROXY` and `HTTP_PROXY` for host-rule traffic when no sandbox proxy is configured, and sandboxed git on github.com can use a `GITHUB_TOKEN` supplied through `credentials.envVars`. When sandboxed commands inherit your host proxy settings, `NO_PROXY` and `ALL_PROXY` are honored too.
+Sandbox host allow and deny rules in `settings.json` accept IPv4 and IPv6 CIDR ranges. The **Sandbox extensions** setting runs extension processes inside the sandbox as well. `/sandbox` can keep sandboxing enabled for the current session only, without changing your global setting. Sandboxed commands can use `HTTPS_PROXY` and `HTTP_PROXY` for host-rule traffic when no sandbox proxy is configured, and sandboxed git on github.com can use a `GITHUB_TOKEN` supplied through `credentials.envVars`. When sandboxed commands inherit your host proxy settings, `NO_PROXY` and `ALL_PROXY` are honored too.
 
 ### Assisted Permissions Guidance
 
 In Assisted permission mode, the `assistedApprovalInstructions` setting lets you supply your own guidance to the permission judge, so confirmation decisions reflect your team's norms (for example, which commands are always safe to run).
 
-`/config` and `/settings` can set and unset `showReasoning`, which controls whether model reasoning is displayed. The managed `fusion` model starts sessions on Auto and applies your `fusionTier` settings; picking Fusion High or Max in `/model` also works from long-context sessions. `/settings` opens a unified dashboard with global search across settings and local resources, and `copilot config` includes a Fusion tier setting. Use `/code` to open the current session in VS Code. Set `COPILOT_SESSION_CWD` to launch and expand LSP and local MCP server configs relative to the session directory. Plugin rules with `alwaysApply: false` stay out of the prompt until you enable them in `/instructions`. Use the `/index` commands to manage tgrep code indexes; managed shared tgrep indexing is on by default for eligible repositories. Managed plugin assignments with state `defaultEnabled` install and activate plugins by default while preserving user overrides. GPT-6.1 Terra appears in the model picker under **New models** when available to your account.
+`/config` and `/settings` can set and unset `showReasoning`, which controls whether model reasoning is displayed. The managed `fusion` model starts sessions on Auto and applies your `fusionTier` settings; picking Fusion High or Max in `/model` also works from long-context sessions. `/settings` opens a unified dashboard with global search across settings and local resources, and `copilot config` includes a Fusion tier setting. Use `/code` to open the current session in VS Code. Set `COPILOT_SESSION_CWD` to launch and expand LSP and local MCP server configs relative to the session directory. Plugin rules with `alwaysApply: false` stay out of the prompt until you enable them in `/instructions`. Use the `/index` commands to manage tgrep code indexes; managed shared tgrep indexing is on by default for eligible repositories. Managed plugin assignments with state `defaultEnabled` install and activate plugins by default while preserving user overrides. Claude Fable 5.2 and GPT-6.1 Terra appear in the model picker under **New models** when available to your account.
+
+### Session Spending Limits and Cost Tips
+
+`--max-ai-credits` sets a session-wide AI credit limit that subagents and `/compact` also respect, and credits used before a resume count toward the limit. `/limits unset` clears the session cap. `/chronicle cost-tips` includes Copilot App sessions and recommends cheaper models and reasoning settings based on your usage.
+
+### Remote Session Creation
+
+Launch the CLI with `--host-allow-session-creation` to let remote clients create sessions on that host for a single launch without changing saved settings. Cloud sessions and remote connections now require an AHP environment.
 
 ### Memory and Session Import
 

@@ -937,7 +937,7 @@ Run `/config` to open a dedicated sidebar configuration screen inside the CLI, g
 
 ### Sandbox Session Control
 
-Sandbox host allow and deny rules in `settings.json` accept IPv4 and IPv6 CIDR ranges. The **Sandbox extensions** setting runs extension processes inside the sandbox as well. `/sandbox` can keep sandboxing enabled for the current session only, without changing your global setting. Sandboxed commands can use `HTTPS_PROXY` and `HTTP_PROXY` for host-rule traffic when no sandbox proxy is configured, and sandboxed git on github.com can use a `GITHUB_TOKEN` supplied through `credentials.envVars`. When sandboxed commands inherit your host proxy settings, `NO_PROXY` and `ALL_PROXY` are honored too.
+Sandbox host allow and deny rules in `settings.json` accept IPv4 and IPv6 CIDR ranges. Sandbox filesystem deny rules support glob patterns, and `sandbox.userPolicy.filesystem.enumeratePaths` grants enumerate-only directory access on Windows. The **Sandbox extensions** setting runs extension processes inside the sandbox as well. `/sandbox` can keep sandboxing enabled for the current session only, without changing your global setting. Sandboxed commands can use `HTTPS_PROXY` and `HTTP_PROXY` for host-rule traffic when no sandbox proxy is configured, and sandboxed git on github.com can use a `GITHUB_TOKEN` supplied through `credentials.envVars`. When sandboxed commands inherit your host proxy settings, `NO_PROXY` and `ALL_PROXY` are honored too.
 
 ### Assisted Permissions Guidance
 

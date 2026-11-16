@@ -134,6 +134,10 @@ copilot --allow-all-mcp-server-instructions
 
 Use this only with servers you fully trust, since their instructions can influence how Copilot responds throughout the entire session. For most projects, the default behavior is sufficient — only enable this if a specific server requires it (for example, an internal tool whose instructions you control).
 
+### Removing and Troubleshooting Servers from the CLI
+
+`copilot mcp remove` and `/mcp delete` delete an entry from `mcp-config.json`, including entries skipped as invalid. Servers passed with `--additional-mcp-config` come from that option and cannot be removed, and built-in servers must be disabled instead. In prompt mode (`-p`), `copilot` warns on stderr and in JSON output when it cannot start MCP servers, for example because `mcp-config.json` cannot be parsed. Workspace MCP configuration in an untrusted folder is skipped; the CLI tells you which folder to trust to load it.
+
 ### Managing Persistent MCP Configuration via Server RPCs
 
 In addition to file-based configuration, GitHub Copilot CLI exposes **server RPCs** that let MCP servers and tooling scripts manage the persistent MCP server registry at runtime. This enables programmatic setup — for example, an installer script that registers a server without requiring you to hand-edit a JSON file.

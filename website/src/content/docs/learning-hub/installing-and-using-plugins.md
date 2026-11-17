@@ -265,6 +265,8 @@ copilot plugin install "ghapp://air/install?..."
 
 Plugins from trusted repositories install and update automatically before chat runs, and Team-assigned plugins can come from Team-defined GitHub marketplaces. The built-in browser plugin is now named `browser-use`; existing preferences keep working.
 
+Team plugins can install from marketplaces on a specific branch or tag, or in a repository subfolder. Plugins can also be installed from repository paths containing `@`, and `copilot plugin marketplace add ./name` (also `../name` and `~/name`) adds a local marketplace directory instead of cloning from GitHub.
+
 ### Loading Plugins from a Local Directory
 
 You can load plugins directly from a local directory without installing them from a marketplace, using the `--plugin-dir` flag when starting Copilot:

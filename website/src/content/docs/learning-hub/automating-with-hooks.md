@@ -157,6 +157,8 @@ When hooks are defined inside a **plugin**, the hook scripts receive two additio
 | `CLAUDE_PROJECT_DIR` | The path to the current project (working) directory |
 | `CLAUDE_PLUGIN_DATA` | The path to a persistent data directory scoped to the plugin |
 
+Plugin hooks can also use `${COPILOT_PLUGIN_ROOT}` in working directories and environment values. Enterprise-managed Shell, Bash, and PowerShell permission rules support regular expressions.
+
 You can also use these as **template variables** directly in the `bash` or `powershell` fields of your `hooks.json` configuration:
 
 ```json

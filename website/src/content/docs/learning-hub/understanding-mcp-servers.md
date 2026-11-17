@@ -118,7 +118,7 @@ This guided flow is the recommended way to add new MCP servers, especially for s
 
 **args**: Arguments passed to the command. Most MCP servers are distributed as npm packages and can be run with `npx -y`.
 
-**env**: Environment variables passed to the server process. Use these for connection strings, API keys, and configuration—never hardcode secrets in the JSON file.
+**env**: Environment variables passed to the server process. Use these for connection strings, API keys, and configuration—never hardcode secrets in the JSON file. In interactive sessions, values are passed literally; use `${NAME}` to reference a host environment variable. If a directory has both `.github/mcp.json` and `.mcp.json`, the `.github/mcp.json` file is ignored rather than merged.
 
 **type** (remote servers): The transport type for remote MCP servers (`http` or `sse`). This field can now be omitted — the CLI defaults to `http` when no type is specified, simplifying remote server configuration.
 
@@ -133,6 +133,10 @@ copilot --allow-all-mcp-server-instructions
 ```
 
 Use this only with servers you fully trust, since their instructions can influence how Copilot responds throughout the entire session. For most projects, the default behavior is sufficient — only enable this if a specific server requires it (for example, an internal tool whose instructions you control).
+
+### Removing and Troubleshooting Servers from the CLI
+
+`copilot mcp remove` and `/mcp delete` delete an entry from `mcp-config.json`, including entries skipped as invalid. Servers passed with `--additional-mcp-config` come from that option and cannot be removed, and built-in servers must be disabled instead. In prompt mode (`-p`), `copilot` warns on stderr and in JSON output when it cannot start MCP servers, for example because `mcp-config.json` cannot be parsed. Workspace MCP configuration in an untrusted folder is skipped; the CLI tells you which folder to trust to load it.
 
 ### Managing Persistent MCP Configuration via Server RPCs
 

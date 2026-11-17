@@ -953,6 +953,10 @@ In Assisted permission mode, the `assistedApprovalInstructions` setting lets you
 
 Launch the CLI with `--host-allow-session-creation` to let remote clients create sessions on that host for a single launch without changing saved settings. Cloud sessions and remote connections now require an AHP environment.
 
+### Browser Use and Password Prompts
+
+Administrators can disable the built-in Browser Use capability, including in running sessions, with the managed setting `features.browserUse`. As an experimental option (enable with `/experimental on`), the CLI can answer `git`, `ssh`, and `sudo` password prompts from agent commands in a masked dialog, so the agent never sees what you type.
+
 ### Memory and Session Import
 
 Session and memory import commands accept the semantic JSONL interchange format, making it possible to bring saved session history or memory entries into Copilot CLI from an external export rather than starting from scratch.
